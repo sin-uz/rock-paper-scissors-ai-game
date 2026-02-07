@@ -4,13 +4,13 @@ import mediapipe as mp
 class HandDetector:
     def __init__(
         self,
-        mirror_view = True,
+        user_perspective = True,
         static_image_mode: bool = False,
         max_num_hands: int = 2,
         min_detection_confidence: float = 0.5,
         min_tracking_confidence: float = 0.5,
     ):
-        self._mirror_view = mirror_view
+        self._user_perspective = user_perspective
         self._mp_hands = mp.solutions.hands
         self._hands = self._mp_hands.Hands(
             static_image_mode=static_image_mode,
@@ -52,7 +52,7 @@ class HandDetector:
 
     def _extract_side(self, handedness):
         side = handedness.classification[0].label
-        if self._mirror_view:
+        if self._user_perspective:
             side = "Left" if side == "Right" else "Right"
 
         return side
