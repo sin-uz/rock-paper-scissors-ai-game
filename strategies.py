@@ -15,6 +15,7 @@ class NaiveStrategy:
     
 
 class ResearchBasedStrategy:
+
     def __init__(
             self,
             action_space=tuple(Move),
@@ -31,7 +32,7 @@ class ResearchBasedStrategy:
         round_number = match_history[-1].round_number
 
         # level 1
-        previous_round =  match_history[round_number]
+        previous_round =  match_history[-1]
 
         if previous_round.outcome == Outcome.PLAYER:
             return MOVE_BEATS[previous_round.computer_move]
