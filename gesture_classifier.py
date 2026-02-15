@@ -53,13 +53,3 @@ class MockClassifier:
             return None
 
         return random.choice(self.moves)
-
-    def get_move_name(self, move):
-        names = {
-            Move.ROCK: "Kamien",
-            Move.PAPER: "Papier",
-            Move.SCISSORS: "Nozyce"
-        }
-        return names.get(move, "Unknown")
-
-        
