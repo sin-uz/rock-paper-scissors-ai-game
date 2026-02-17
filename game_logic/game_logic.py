@@ -1,12 +1,12 @@
 import time
 from .game_state import GameState, GameConfig
-from domain import RoundRecord, evaluate_round, Outcome
+from domain import RoundRecord, evaluate_round, Outcome, ThumbDirection
 
 class GameLogic:
 
-    def __init__(self, thumb_detector, move_classifier, computer_strategy):
-        self.thumb_detector = thumb_detector
-        self.move_classifier = move_classifier
+    def __init__(self, classifier, computer_strategy):
+
+        self.classifier = classifier
         self.computer_strategy = computer_strategy
         
         self.state = GameState.IDLE
@@ -41,25 +41,28 @@ class GameLogic:
     def update(self, primary_hand):
   
         current_time = time.time()
-        
+        side, landmarks = primary_hand if primary_hand else (None, None) #unpack krotka
+
         if self.state not in [GameState.IDLE, GameState.GAME_OVER]:
-            if self._check_quit_gesture(primary_hand, current_time):
+            if self._check_quit_gesture(landmarks, current_time):
                 return
       
         if self.state == GameState.IDLE:
-            self._handle_idle(primary_hand, current_time)
+            self._handle_idle(landmarks, current_time)
         elif self.state == GameState.COUNTDOWN:
             self._handle_countdown(current_time)
         elif self.state == GameState.ROUND_ACTIVE:
-            self._handle_round_active(primary_hand, current_time)
+            self._handle_round_active(side, landmarks, current_time)
         elif self.state == GameState.ROUND_RESULT:
             self._handle_round_result(current_time)
         elif self.state == GameState.GAME_OVER:
-            self._handle_game_over(primary_hand, current_time)
+            self._handle_game_over(landmarks, current_time)
     
-    def _check_quit_gesture(self, hand, current_time):
+    def _check_quit_gesture(self, landmarks, current_time):
 
-        if hand and self.thumb_detector.is_thumbs_down(hand):
+        direction = self.classifier.determine_hand_direction(landmarks) if landmarks else None
+
+        if direction == ThumbDirection.DOWN: ##
             if self.gesture_start_time is None:
                 self.gesture_start_time = current_time
 
@@ -68,13 +71,14 @@ class GameLogic:
                 self.gesture_start_time = None
                 return True
         else:
-            if self.state != GameState.IDLE:
-                if not (hand and self.thumb_detector.is_thumbs_up(hand)):
+            if direction != ThumbDirection.UP: ##
                     self.gesture_start_time = None
         return False
     
-    def _handle_idle(self, hand, current_time):
-        if hand and self.thumb_detector.is_thumbs_up(hand):
+    def _handle_idle(self, landmarks, current_time):
+        direction = self.classifier.determine_hand_direction(landmarks) if landmarks else None
+
+        if direction == ThumbDirection.UP: ##
             if self.gesture_start_time is None:
                 self.gesture_start_time = current_time
             elif current_time - self.gesture_start_time >= GameConfig.GESTURE_HOLD_DURATION:
@@ -90,11 +94,11 @@ class GameLogic:
             self.state = GameState.ROUND_ACTIVE
             self.round_number += 1
     
-    def _handle_round_active(self, hand, current_time):
-        if not hand:
+    def _handle_round_active(self, side, landmarks, current_time):
+        if not landmarks:
             return
         
-        player_move = self.move_classifier.classify(hand)
+        player_move = self.classifier.determine_move(side, landmarks)
         if player_move is None:
             return
       
@@ -131,8 +135,10 @@ class GameLogic:
             self.current_computer_move = None
             self.current_outcome = None
     
-    def _handle_game_over(self, hand, current_time):
-        if hand and self.thumb_detector.is_thumbs_up(hand):
+    def _handle_game_over(self, landmarks, current_time):
+        direction = self.classifier.determine_hand_direction(landmarks) if landmarks else None
+        
+        if direction == ThumbDirection.UP: ##
             if self.gesture_start_time is None:
                 self.gesture_start_time = current_time
             elif current_time - self.gesture_start_time >= GameConfig.GESTURE_HOLD_DURATION:
