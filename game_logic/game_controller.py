@@ -40,7 +40,7 @@ class GameController:
         primary_hand = None
         if "Right" in detected_hands:
             primary_hand = ("Right", detected_hands["Right"])
-        if "Left" in detected_hands:
+        elif "Left" in detected_hands:
             primary_hand = ("Left", detected_hands["Left"])
         
         self.logic.update(primary_hand)
