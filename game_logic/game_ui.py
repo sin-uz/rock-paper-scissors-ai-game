@@ -1,12 +1,19 @@
 import cv2
 from .game_state import GameState
-from domain import Outcome
+from domain import Outcome, Move
 
 class GameUI:
 
-    def __init__(self, move_classifier):
+    MOVE_NAMES = {
+        Move.ROCK: "Kamien",
+        Move.PAPER: "Papier",
+        Move.SCISSORS: "Nozyce"
+    }
+
+    def __init__(self, move_classifier=None):
         
         self.move_classifier = move_classifier
+    
     
     def render(self, frame, game_logic):
         
@@ -32,6 +39,10 @@ class GameUI:
             self._render_game_over(frame, width, height, game_logic)
         
         return frame
+    
+    @staticmethod
+    def get_move_name(move):
+        return GameUI.MOVE_NAMES.get(move, "Unknown")
     
     def _render_idle(self, frame, width, height, game_logic):
         progress = game_logic.get_gesture_progress()
@@ -63,8 +74,9 @@ class GameUI:
     
     def _render_result(self, frame, width, height, game_logic):
 
-        player_move_name = self.move_classifier.get_move_name(game_logic.current_player_move)
-        computer_move_name = self.move_classifier.get_move_name(game_logic.current_computer_move)
+        player_move_name = self.get_move_name(game_logic.current_player_move)
+        computer_move_name = self.get_move_name(game_logic.current_computer_move)
+
         
         cv2.putText(frame, f"Ty: {player_move_name}", (50, height//2 - 50),
                    cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 255), 2)

@@ -12,6 +12,10 @@ class Outcome(Enum):
     COMPUTER = auto()
     DRAW = auto()
 
+class ThumbDirection(Enum):
+    UP = auto()
+    DOWN = auto()
+
 
 # records
 @dataclass(frozen=True, slots=True)
