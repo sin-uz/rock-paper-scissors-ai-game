@@ -1,4 +1,5 @@
 import random
+import numpy as np
 import mediapipe as mp
 
 from domain import Move, ThumbDirection
@@ -104,3 +105,60 @@ class MockClassifier:
             return None
 
         return random.choice(self.moves)
+    
+
+class VectorBasedClassifier(GestureClassifier):
+    def __init__(self, straightening_threshold: float = 0):
+        super().__init__()
+
+        self.straightening_threshold = straightening_threshold
+
+    def determine_move(self, side, landmarks):
+        patterns = {
+            (False, False, False, False): Move.ROCK,
+            (True, True, True, True): Move.PAPER,
+            (True, True, False, False): Move.SCISSORS
+        }
+
+        return patterns.get(self._finger_states(side, landmarks))
+    
+    def _finger_states(self, side, landmarks):
+        return (
+            self._is_finger_straightened(landmarks, self._HL.INDEX_FINGER_PIP),
+            self._is_finger_straightened(landmarks, self._HL.MIDDLE_FINGER_PIP),
+            self._is_finger_straightened(landmarks, self._HL.RING_FINGER_PIP),
+            self._is_finger_straightened(landmarks, self._HL.PINKY_PIP),
+        )
+    
+    def _is_finger_straightened(self, landmarks, finger_pip_id):
+        dot_product = self._calculate_dot_product(landmarks, finger_pip_id)
+
+        return True if dot_product > self.straightening_threshold else False
+
+    def _calculate_dot_product(self, landmarks, finger_pip_id):
+        inner_vector = self._calculate_inner_vector(landmarks, finger_pip_id)
+        outer_vector = self._calculate_outer_vector(landmarks, finger_pip_id)
+
+        return float(
+            np.dot(inner_vector, outer_vector) /
+            (np.linalg.norm(inner_vector) * np.linalg.norm(outer_vector))
+        )
+
+    def _calculate_outer_vector(self, landmarks, finger_pip_id):
+        return self._calculate_vector(
+            landmarks, finger_pip_id, finger_pip_id + 2
+        )
+
+    def _calculate_inner_vector(self, landmarks, finger_pip_id):
+        return self._calculate_vector(
+            landmarks, finger_pip_id - 1, finger_pip_id
+        )
+
+    def _calculate_vector(self, landmarks, lm1_id, lm2_id):
+        lm1_coords = np.array(self._get_all_coordinates(landmarks, lm1_id))
+        lm2_coords = self._get_all_coordinates(landmarks, lm2_id)
+
+        return lm2_coords - lm1_coords
+
+    def _get_all_coordinates(self, hand_landmarks, landmark_id):
+        return hand_landmarks[int(landmark_id)]
