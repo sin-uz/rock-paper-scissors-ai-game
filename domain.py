@@ -12,6 +12,10 @@ class Outcome(Enum):
     COMPUTER = auto()
     DRAW = auto()
 
+class ThumbDirection(Enum):
+    UP = auto()
+    DOWN = auto()
+
 
 # records
 @dataclass(frozen=True, slots=True)
@@ -31,6 +35,12 @@ MOVE_BEATS = {
     Move.ROCK: Move.SCISSORS,
     Move.PAPER: Move.ROCK,
     Move.SCISSORS: Move.PAPER
+}
+
+MOVE_LOSES = {
+    Move.ROCK: Move.PAPER,
+    Move.PAPER: Move.SCISSORS,
+    Move.SCISSORS: Move.ROCK
 }
 
 def evaluate_round(player: Move, computer: Move):
