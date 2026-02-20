@@ -37,6 +37,12 @@ MOVE_BEATS = {
     Move.SCISSORS: Move.PAPER
 }
 
+MOVE_LOSES = {
+    Move.ROCK: Move.PAPER,
+    Move.PAPER: Move.SCISSORS,
+    Move.SCISSORS: Move.ROCK
+}
+
 def evaluate_round(player: Move, computer: Move):
     if player == computer:
         return Outcome.DRAW
