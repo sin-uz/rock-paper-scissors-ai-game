@@ -4,7 +4,7 @@ from domain import Move
 class GameSyncController:
     def __init__(self, classifier, swing_threshold=0.1, gesture_confirm_time=0.8):
         self.classifier = classifier
-        self.swing_threshold = swing_threshold 
+        self.swing_threshold = swing_threshold
         self.gesture_confirm_time = gesture_confirm_time
         self.state = "WAITING"
         self.swings_detected = 0
@@ -53,3 +53,4 @@ class GameSyncController:
         self.current_gesture = None
 
         self.gesture_start_time = None
+
