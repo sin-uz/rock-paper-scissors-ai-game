@@ -51,4 +51,5 @@ class GameSyncController:
         self.swings_detected = 0
         self.min_y = 1.0
         self.current_gesture = None
+
         self.gesture_start_time = None
