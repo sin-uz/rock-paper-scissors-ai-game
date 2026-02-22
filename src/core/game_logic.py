@@ -1,6 +1,6 @@
 import time
-from .game_state import GameState, GameConfig
-from domain import RoundRecord, evaluate_round, Outcome, ThumbDirection
+from src.core.game_state import GameState, GameConfig
+from src.core.domain import RoundRecord, evaluate_round, Outcome, ThumbDirection
 
 class GameLogic:
 

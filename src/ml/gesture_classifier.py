@@ -2,7 +2,7 @@ import random
 import numpy as np
 import mediapipe as mp
 
-from domain import Move, ThumbDirection
+from src.core.domain import Move, ThumbDirection
 
 
 class GestureClassifier:
