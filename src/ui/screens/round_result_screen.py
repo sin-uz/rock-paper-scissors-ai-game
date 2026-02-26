@@ -135,7 +135,8 @@ class RoundResultScreen(ScreenBase):
         layout.addLayout(self._build_score_column("AI", self._computer_score, "roundScoreValueAi"))
         return card
 
-    def _build_score_column(self, title: str, value_label: QLabel, value_name: str) -> QVBoxLayout:
+    @staticmethod
+    def _build_score_column(title: str, value_label: QLabel, value_name: str) -> QVBoxLayout:
         column = QVBoxLayout()
         column.setSpacing(4)
         title_label = QLabel(title)
@@ -259,7 +260,8 @@ class RoundResultScreen(ScreenBase):
         layout.addWidget(ai_group, 1)
         return row
 
-    def _build_move_group(self, title: str, value_label: QLabel) -> QFrame:
+    @staticmethod
+    def _build_move_group(title: str, value_label: QLabel) -> QFrame:
         group = QFrame()
         group.setObjectName("moveGroup")
         layout = QVBoxLayout(group)

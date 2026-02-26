@@ -1,7 +1,6 @@
 import sys
 import threading
 
-from PySide6.QtCore import QObject, Signal
 from PySide6.QtWidgets import QApplication
 
 from src.core.game_controller import GameController

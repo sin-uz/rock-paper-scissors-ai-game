@@ -1,6 +1,5 @@
 from PySide6.QtWidgets import QWidget, QStackedLayout
 
-from src.core.domain import RoundRecord
 from src.core.game_controller import GameController
 from src.ui.components.camera import CameraFrame
 from src.ui.screens.game_over_screen import GameOverScreen

@@ -32,6 +32,10 @@ def _icon_label(name: str, color: str, icon_size: int = 48) -> QLabel:
 
 class GameOverScreen(ScreenBase):
     def __init__(self, parent=None):
+        """
+            The screen shown at the end of the game, displaying the final score and performance summary, and allowing the player to save their score with a nickname. It also shows a QR code linking to the global leaderboard.
+        :param parent: It has to be the ContentManager, because the "Restart game" button needs to call the reset_game method of the ContentManager to reset the game state and switch back to the pre-game screen. The parent is also used to inherit the style from the main window.
+        """
         super().__init__(parent)
 
         self._parent = parent
@@ -407,7 +411,9 @@ class GameOverScreen(ScreenBase):
 
         play_again = QPushButton("Restart game")
         play_again.setObjectName("primaryButton")
-        play_again.clicked.connect(self._parent.reset_game)
+        if self._parent is not None and hasattr(self._parent, "reset_game"):
+            play_again.clicked.connect(self._parent.reset_game)
+
         play_again.setFixedHeight(52)
         play_again.setMinimumWidth(200)
 

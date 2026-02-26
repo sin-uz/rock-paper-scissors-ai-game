@@ -1,4 +1,3 @@
-from collections.abc import Callable
 
 import cv2
 from cv2 import VideoCapture
