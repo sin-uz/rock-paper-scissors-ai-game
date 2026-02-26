@@ -1,7 +1,8 @@
 import cv2
-from .game_state import GameState
-from domain import Outcome, Move
+from src.core.game_state import GameState
+from src.core.domain import Outcome, Move
 
+# Deprecated
 class GameUI:
 
     MOVE_NAMES = {

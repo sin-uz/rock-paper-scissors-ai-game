@@ -1,0 +1,557 @@
+#rootLayout {
+    background-color: #f7f7f7;
+    color: #1f1f1f;
+    font-family: Arial, sans-serif;
+}
+#logo QLabel {
+    color: #4b5563;
+    font-size: 12px;
+    font-weight: 600;
+}
+#divider {
+    background-color: #d1d5db;
+}
+#statusPill {
+    background-color: rgba(52, 199, 89, 0.12);
+    border: 1px rgba(52, 199, 89, 0.35);
+    border-radius: 9999px;
+}
+#statusDot {
+    background-color: #34c759;
+    border-radius: 5px;
+}
+#statusLabel {
+    font-size: 10px;
+    font-weight: 700;
+    color: #4b5563;
+}
+#scoreBar {
+    background-color: transparent;
+    border-radius: 9999px;
+}
+#scorePill {
+    background-color: #FFFFFF;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    border-radius: 20px;
+}
+#scoreLabel {
+    font-size: 10px;
+    font-weight: 700;
+    color: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+#playerScore {
+    font-size: 22px;
+    font-weight: 700;
+    color: #34c759;
+    min-width: 32px;
+}
+#computerScore {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ef4444;
+    min-width: 32px;
+}
+#cameraContainer {
+    border-radius: 24px;
+}
+#cameraOverlay {
+    background-color: transparent;
+}
+#instructionCard {
+    background-color: rgba(0, 0, 0, 0.35);
+    border-radius: 24px;
+}
+#instructionTitle {
+    font-size: 24px;
+    font-weight: 700;
+    color: #f8fafc;
+}
+#instructionSub {
+    font-size: 13px;
+    color: rgba(248, 250, 252, 0.85);
+}
+#scoreOverlay {
+    background-color: transparent;
+}
+#helperCard {
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    border-radius: 16px;
+    min-height: 72px;
+    min-width: 220px;
+}
+#helperTitle {
+    font-size: 15px;
+    font-weight: 700;
+    color: #334155;
+}
+#helperText {
+    color: #6b7280;
+    font-size: 13px;
+}
+#thumbIconBox {
+    background-color: rgba(51, 199, 88, 0.1);
+    border-radius: 15px;
+    min-width: 30px;
+    min-height: 30px;
+    max-width: 30px;
+    max-height: 30px;
+}
+#thumbIconBoxDown {
+    background-color: rgba(255, 59, 48, 0.1);
+    border-radius: 15px;
+    min-width: 30px;
+    min-height: 30px;
+    max-width: 30px;
+    max-height: 30px;
+}
+#thumbIcon {
+    color: #33C758;
+}
+#roundTitle {
+    font-size: 52px;
+    font-weight: 900;
+    color: #0f172a;
+}
+#roundTitleWin {
+    font-size: 52px;
+    font-weight: 900;
+    color: #34c759;
+}
+#roundTitleLose {
+    font-size: 52px;
+    font-weight: 900;
+    color: #ff3b30;
+}
+#roundSubtitle {
+    font-size: 17px;
+    color: #6b7280;
+    font-weight: 500;
+}
+#playerPanel {
+    background-color: #ffffff;
+    border: 2px solid rgba(51, 199, 89, 0.6);
+    border-radius: 24px;
+}
+#aiPanel {
+    background-color: #ffffff;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    border-radius: 24px;
+}
+#aiLabel {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+#aiValue {
+    font-size: 34px;
+    font-weight: 800;
+    color: #0f172a;
+}
+#moveRow {
+    background-color: rgba(241, 245, 249, 0.8);
+    border-radius: 16px;
+}
+#moveTitle {
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+#moveValue {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+}
+#instructionBar {
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    border-radius: 20px;
+}
+#gestureTile {
+    background-color: transparent;
+}
+#gestureTitle {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+}
+#gestureSubtitle {
+    font-size: 11px;
+    color: #64748b;
+}
+/* ── Game Over Screen ──────────────────────────────────────────── */
+#endTitle {
+    font-size: 56px;
+    font-weight: 900;
+    color: #0f172a;
+}
+#endTitleWin {
+    font-size: 56px;
+    font-weight: 900;
+    color: #34c759;
+}
+#endTitleLose {
+    font-size: 56px;
+    font-weight: 900;
+    color: #ff3b30;
+}
+#endSubtitle {
+    font-size: 17px;
+    font-weight: 500;
+    color: #64748b;
+}
+#endScorePanel {
+    background-color: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 28px;
+}
+#endPlayerCircle {
+    background-color: rgba(51, 199, 88, 0.10);
+    border-radius: 56px;
+}
+#endAiCircle {
+    background-color: rgba(248, 250, 252, 1.0);
+    border-radius: 56px;
+}
+#endBadgeGreen {
+    background-color: #34c759;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 700;
+    border-radius: 9999px;
+    padding: 3px 7px;
+}
+#endBadgeRed {
+    background-color: #ff3b30;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 700;
+    border-radius: 9999px;
+    padding: 3px 7px;
+}
+#endPlayerLabel {
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 3px;
+}
+#endAiLabel {
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 3px;
+}
+#endPlayerScore {
+    font-size: 64px;
+    font-weight: 900;
+    color: #34c759;
+}
+#endAiScore {
+    font-size: 64px;
+    font-weight: 900;
+    color: #ff3b30;
+}
+#endVsLabel {
+    font-size: 32px;
+    font-weight: 300;
+    color: #e2e8f0;
+}
+#endPerfCard {
+    background-color: #f8fafc;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 16px;
+}
+#endPerfTitle {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    letter-spacing: 1px;
+}
+#endPerfRow {
+    font-size: 13px;
+    color: #475569;
+}
+#endTotalBox {
+    background-color: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 12px;
+}
+#endTotalLabel {
+    font-size: 12px;
+    font-weight: 500;
+    color: #94a3b8;
+}
+#endTotalValue {
+    font-size: 13px;
+}
+#endAdminSection {
+    border-top: 1px solid rgba(226, 232, 240, 0.9);
+}
+#endAdminLabel {
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+}
+#endNameInput {
+    background-color: #f8fafc;
+    border: 1px solid rgba(203, 213, 225, 0.9);
+    border-radius: 12px;
+    padding: 0 16px;
+    font-size: 14px;
+    color: #0f172a;
+}
+#endNameInput:focus {
+    border: 1px solid #33c758;
+}
+#endSaveButton {
+    background-color: #33c758;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 12px;
+    padding: 0 24px;
+    min-width: 120px;
+}
+#endSaveButton:hover {
+    background-color: #2db34e;
+}
+#endLeaderboardPanel {
+    background-color: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 28px;
+}
+#endLeaderTitle {
+    font-size: 17px;
+    font-weight: 700;
+    color: #0f172a;
+}
+#endLeaderSubtitle {
+    font-size: 13px;
+    color: #64748b;
+}
+#endQrBox {
+    background-color: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 16px;
+}
+#endScanPill {
+    background-color: rgba(51, 199, 88, 0.07);
+    border-radius: 9999px;
+}
+#endScanText {
+    font-size: 12px;
+    font-weight: 700;
+    color: #33c758;
+    letter-spacing: 1px;
+}
+#primaryButton {
+    background-color: #0f172a;
+    color: #ffffff;
+    border-radius: 12px;
+    padding: 10px 18px;
+    font-weight: 700;
+}
+#secondaryButton {
+    background-color: #ffffff;
+    color: #0f172a;
+    border: 1px solid rgba(148, 163, 184, 0.7);
+    border-radius: 12px;
+    padding: 10px 18px;
+    font-weight: 700;
+}
+#settingsButton {
+    background-color: transparent;
+    border: 1px solid #d1d5db;
+    border-radius: 16px;
+    padding: 6px 12px;
+    color: #6b7280;
+}
+#settingsButton:hover {
+    background-color: #f3f4f6;
+}
+#cameraFrame {
+    background-color: transparent;
+    border: none;
+    border-radius: 24px;
+}
+#cameraFrame QLabel {
+    border-radius: 20px;
+    background-color: transparent;
+}
+#cameraVideoLabel {
+    color: rgba(248, 250, 252, 0.6);
+}
+#cameraAlert {
+    color: rgba(248, 250, 252, 1.0);
+    background-color: rgba(2, 6, 23, 0.45);
+    font-size: 20px;
+    padding: 12px;
+    border-radius: 12px;
+}
+#gestureCircle {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(59, 130, 246, 0.5);
+    border-radius: 60px;
+}
+#gesturePill {
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(156, 163, 175, 0.6);
+    border-radius: 9999px;
+    color: #6b7280;
+}
+#cameraLabel {
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    color: rgba(31, 41, 55, 0.8);
+    padding: 6px 10px;
+    font-size: 11px;
+}
+#neuralLabel {
+    color: rgba(37, 99, 235, 0.85);
+    font-size: 10px;
+    font-weight: 700;
+}
+#helperMeta {
+    color: #9ca3af;
+    font-size: 9px;
+    font-weight: 700;
+}
+#commPanel {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(156, 163, 175, 0.5);
+    border-radius: 16px;
+}
+#commTitle {
+    font-size: 12px;
+    font-weight: 700;
+    color: #4b5563;
+}
+#commMessage {
+    font-size: 13px;
+    color: #1f2937;
+}
+#copyright_label {
+    color: #94A3B8;
+    font-size: 15px;
+}
+#roundScoreCard {
+    background-color: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 36px;
+}
+#roundScoreDivider {
+    background-color: rgba(226, 232, 240, 0.7);
+}
+#roundScoreLabel {
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+}
+#roundScoreValuePlayer {
+    font-size: 72px;
+    font-weight: 900;
+    color: #34c759;
+}
+#roundScoreValueAi {
+    font-size: 72px;
+    font-weight: 900;
+    color: #ff3b30;
+}
+#roundFramePanel {
+    background-color: #ffffff;
+    border: 6px solid #33c758;
+    border-radius: 36px;
+    min-height: 420px;
+}
+#roundFrameContainer {
+    background-color: #e2e8f0;
+    border-radius: 28px;
+    min-height: 360px;
+}
+#roundFrameLabel {
+    color: #94a3b8;
+}
+/* roundFrameOverlay is transparent by WA_TranslucentBackground - no stylesheet needed */
+#roundLivePill {
+    background-color: #33c758;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 9999px;
+    padding: 4px 10px;
+    letter-spacing: 1px;
+}
+#roundDetectedCard {
+    background-color: rgba(15, 23, 42, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+}
+#roundDetectedTitle {
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+#roundDetectedValue {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+}
+#roundDetectedConfidence {
+    font-size: 13px;
+    font-weight: 700;
+    color: #33c758;
+}
+#roundAiPanel {
+    background-color: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 36px;
+}
+#roundAiBadge {
+    background-color: #1e293b;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 9999px;
+    padding: 4px 12px;
+    letter-spacing: 2px;
+}
+#roundAiCircleOuter {
+    background-color: rgba(248, 250, 252, 0.9);
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 120px;
+}
+#roundAiCircleInner {
+    background-color: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-radius: 96px;
+}
+#roundAiIcon {
+    font-size: 48px;
+    font-weight: 800;
+    color: #0f172a;
+}
+#roundAiLabel {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+#roundAiValue {
+    font-size: 36px;
+    font-weight: 900;
+    color: #0f172a;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+}

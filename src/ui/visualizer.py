@@ -26,6 +26,28 @@ class AnnotationsVisualizer:
 
         return image
 
+    @staticmethod
+    def draw_analytics(image, fps, hands_count):
+        analytics_lines = [
+            f"FPS: {fps:0.1f}",
+            f"Hands: {hands_count}",
+        ]
+
+        y = 24
+        for line in analytics_lines:
+            cv2.putText(
+                image,
+                line,
+                (16, y),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.6,
+                (0, 255, 255),
+                2,
+            )
+            y += 24
+
+        return image
+
     def _draw_hand_features(self, image, landmarks_px, bbox, label):
         if self.draw_landmarks:
             self._draw_landmarks(image, landmarks_px)

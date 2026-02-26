@@ -1,10 +1,15 @@
 import time
-from .game_state import GameState, GameConfig
-from domain import RoundRecord, evaluate_round, Outcome, ThumbDirection
+
+from src.core.game_state import GameState, GameConfig
+from src.core.domain import RoundRecord, evaluate_round, Outcome, ThumbDirection
+from src.ui.utils.bridge import UiBridge, EventGameOver, EventGameCountdown, EventGameRoundActive, \
+    EventGameRoundResult, EventScoreChanged, EventGestureProgress
+
 
 class GameLogic:
 
-    def __init__(self, classifier, computer_strategy):
+    def __init__(self, ui_bridge: UiBridge, classifier, computer_strategy):
+        self._ui_bridge = ui_bridge
 
         self.classifier = classifier
         self.computer_strategy = computer_strategy
@@ -38,8 +43,7 @@ class GameLogic:
         self.current_outcome = None
         ##self.computer_strategy.reset()
     
-    def update(self, primary_hand):
-  
+    def update(self, primary_hand, frame):
         current_time = time.time()
         side, landmarks = primary_hand if primary_hand else (None, None) #unpack krotka
 
@@ -52,7 +56,7 @@ class GameLogic:
         elif self.state == GameState.COUNTDOWN:
             self._handle_countdown(current_time)
         elif self.state == GameState.ROUND_ACTIVE:
-            self._handle_round_active(side, landmarks, current_time)
+            self._handle_round_active(side, landmarks, current_time, frame)
         elif self.state == GameState.ROUND_RESULT:
             self._handle_round_result(current_time)
         elif self.state == GameState.GAME_OVER:
@@ -68,8 +72,18 @@ class GameLogic:
 
             elif current_time - self.gesture_start_time >= GameConfig.GESTURE_HOLD_DURATION:
                 self.state = GameState.GAME_OVER
+                self._ui_bridge.event_game_over.emit(EventGameOver(
+                    player_score=self.player_score,
+                    computer_score=self.computer_score,
+                    match_history=self.match_history,
+                ))
                 self.gesture_start_time = None
                 return True
+
+            self._ui_bridge.event_gesture_progress.emit(EventGestureProgress(
+                progress=self.get_gesture_progress(),
+                thumb_direction=direction
+            ))
         else:
             if direction != ThumbDirection.UP: ##
                     self.gesture_start_time = None
@@ -85,6 +99,16 @@ class GameLogic:
                 self.state = GameState.COUNTDOWN
                 self.countdown_start_time = current_time
                 self.gesture_start_time = None
+                self._ui_bridge.event_game_started.emit(self.state)
+                self._ui_bridge.event_game_countdown.emit(EventGameCountdown(
+                    count_down_time=self.get_countdown_value()
+                ))
+                return
+
+            self._ui_bridge.event_gesture_progress.emit(EventGestureProgress(
+                progress=self.get_gesture_progress(),
+                thumb_direction=direction
+            ))
         else:
             self.gesture_start_time = None
     
@@ -93,8 +117,14 @@ class GameLogic:
         if elapsed >= GameConfig.COUNTDOWN_DURATION:
             self.state = GameState.ROUND_ACTIVE
             self.round_number += 1
+
+            self._ui_bridge.event_game_round_active.emit(EventGameRoundActive())
+        else:
+            self._ui_bridge.event_game_countdown.emit(EventGameCountdown(
+                count_down_time=self.get_countdown_value()
+            ))
     
-    def _handle_round_active(self, side, landmarks, current_time):
+    def _handle_round_active(self, side, landmarks, current_time, frame):
         if not landmarks:
             return
         
@@ -124,12 +154,30 @@ class GameLogic:
         self.match_history.append(round_record)
         
         self.state = GameState.ROUND_RESULT
+        self._ui_bridge.event_game_round_result.emit(EventGameRoundResult(
+            round_record=round_record,
+            frame=frame
+        ))
+        self._ui_bridge.event_score_changed.emit(EventScoreChanged(
+            computer_score=self.computer_score,
+            player_score=self.player_score
+        ))
+
         self.result_start_time = current_time
     
     def _handle_round_result(self, current_time):
         elapsed = current_time - self.result_start_time
         if elapsed >= GameConfig.RESULT_DURATION:
             self.state = GameState.COUNTDOWN
+            # self._ui_bridge.state_changed.emit(StateChangeEventData(
+            #     self.state,
+            #     player_score=self.player_score,
+            #     computer_score=self.computer_score,
+            #     match_history=self.match_history,
+            # ))
+            # self._ui_bridge.event_game_countdown.emit(EventGameCountdown(
+            #     count_down_time=self.get_countdown_value()
+            # ))
             self.countdown_start_time = current_time
             self.current_player_move = None
             self.current_computer_move = None
