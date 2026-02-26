@@ -29,6 +29,7 @@ class GameController:
         )
         self.ui = GameUI()
         self._cap = cap or VideoCapture(0)
+        self._stop_detection = False
 
     def start(self):
         with HandDetector(
@@ -39,15 +40,17 @@ class GameController:
             min_tracking_confidence=0.7
         ) as detector:
             while self._cap.isOpened():
+                if self._stop_detection:
+                    continue
+
                 reft, frame = self._cap.read()
                 if not reft:
                     break
 
                 detected_hands = detector.detect(frame)
-                self.update(detected_hands)
+                self.update(detected_hands, frame)
 
                 self._ui_bridge.event_frame_changed.emit(EventFrameChanged(frame, detected_hands))
-
     @property
     def player_score(self):
         return self.logic.player_score
@@ -68,7 +71,7 @@ class GameController:
         self.logic.reset()
 
 
-    def update(self, detected_hands) -> None:
+    def update(self, detected_hands: dict[str, list[tuple[float, float, float]]], frame: cv2.typing.MatLike) -> None:
         """
         Priorytet wykrywania ręki prawej nad lewą
         """
@@ -78,13 +81,16 @@ class GameController:
         elif "Left" in detected_hands:
             primary_hand = ("Left", detected_hands["Left"])
         
-        self.logic.update(primary_hand)
+        self.logic.update(primary_hand, frame)
 
     def render_ui(self, frame):
         return self.ui.render(frame, self.logic)
     
     def is_game_over(self):
         return self.logic.state == GameState.GAME_OVER
+
+    def set_stop_detection(self, stop: bool):
+        self._stop_detection = stop
 
     def close(self):
         if self._cap.isOpened():

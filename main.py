@@ -14,7 +14,6 @@ def main():
     app = QApplication(sys.argv)
     bridge = UiBridge()
 
-
     classifier = VectorBasedClassifier()
     controller = GameController(classifier, bridge)
     game_window = Window(
@@ -23,7 +22,7 @@ def main():
     )
 
 
-    bridge.event_frame_changed.connect(game_window.get_camera_frame().update_frame)
+    bridge.event_frame_changed.connect(game_window.content_frame.update_camera_frame)
     bridge.event_score_changed.connect(game_window.on_score_change)
     bridge.event_game_over.connect(game_window.on_game_over)
     bridge.event_game_idle.connect(game_window.on_game_idle)
@@ -33,8 +32,8 @@ def main():
     bridge.event_gesture_progress.connect(game_window.on_gesture_progress)
     bridge.event_game_started.connect(game_window.on_game_started)
 
-
     game_window.show()
+
     threading.Thread(target=controller.start, daemon=True).start()
 
     sys.exit(

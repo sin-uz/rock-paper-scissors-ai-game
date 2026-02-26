@@ -1,6 +1,5 @@
 import time
 
-
 from src.core.game_state import GameState, GameConfig
 from src.core.domain import RoundRecord, evaluate_round, Outcome, ThumbDirection
 from src.ui.utils.bridge import UiBridge, EventGameOver, EventGameCountdown, EventGameRoundActive, \
@@ -44,7 +43,7 @@ class GameLogic:
         self.current_outcome = None
         ##self.computer_strategy.reset()
     
-    def update(self, primary_hand):
+    def update(self, primary_hand, frame):
         current_time = time.time()
         side, landmarks = primary_hand if primary_hand else (None, None) #unpack krotka
 
@@ -57,7 +56,7 @@ class GameLogic:
         elif self.state == GameState.COUNTDOWN:
             self._handle_countdown(current_time)
         elif self.state == GameState.ROUND_ACTIVE:
-            self._handle_round_active(side, landmarks, current_time)
+            self._handle_round_active(side, landmarks, current_time, frame)
         elif self.state == GameState.ROUND_RESULT:
             self._handle_round_result(current_time)
         elif self.state == GameState.GAME_OVER:
@@ -125,7 +124,7 @@ class GameLogic:
                 count_down_time=self.get_countdown_value()
             ))
     
-    def _handle_round_active(self, side, landmarks, current_time):
+    def _handle_round_active(self, side, landmarks, current_time, frame):
         if not landmarks:
             return
         
@@ -156,7 +155,8 @@ class GameLogic:
         
         self.state = GameState.ROUND_RESULT
         self._ui_bridge.event_game_round_result.emit(EventGameRoundResult(
-            round_record=round_record
+            round_record=round_record,
+            frame=frame
         ))
         self._ui_bridge.event_score_changed.emit(EventScoreChanged(
             computer_score=self.computer_score,

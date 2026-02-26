@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from PySide6.QtGui import QPixmap, Qt
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QWidget
 
@@ -16,16 +18,18 @@ class Header(QWidget):
             left_layout.setContentsMargins(0, 0, 0, 0)
             left_layout.setSpacing(12)
 
-            left_layout.addWidget(self._helper_logo("./src/ui/assets/sinuz.png"))
-            left_layout.addWidget(self._helper_logo("./src/ui/assets/issi.png"))
-            left_layout.addWidget(self._helper_logo("./src/ui/assets/uz.png"))
+            file_dir = Path(__file__).resolve().parents[1] / "assets"
+
+            left_layout.addWidget(self._helper_logo(file_dir / "sinuz.png"))
+            left_layout.addWidget(self._helper_logo(file_dir / "issi.png"))
+            left_layout.addWidget(self._helper_logo(file_dir / "uz.png"))
 
             layout.addStretch(1)
             layout.addWidget(center_group)
             layout.addStretch(1)
 
         @staticmethod
-        def _helper_logo(src: str) -> QFrame:
+        def _helper_logo(src: Path) -> QFrame:
             """
             It's helper function that creates a QFrame containing a logo image. It takes the path to the image as an argument and returns a
             QFrame with the image scaled to a height of 64 pixels.

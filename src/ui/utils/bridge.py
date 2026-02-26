@@ -6,8 +6,6 @@ from PySide6.QtCore import Signal, QObject
 from src.core.domain import RoundRecord, ThumbDirection
 from src.core.game_state import GameState
 
-
-
 @dataclass
 class EventFrameChanged:
     def __init__(self, frame: cv2.typing.MatLike, detected_hands: dict[str, list[tuple[float, float, float]]]):
@@ -38,8 +36,9 @@ class EventGameRoundActive:
 
 @dataclass
 class EventGameRoundResult:
-    def __init__(self, round_record: RoundRecord):
+    def __init__(self, round_record: RoundRecord, frame: cv2.typing.MatLike):
         self.round_record = round_record
+        self.frame = frame
 
 @dataclass
 class EventGameOver:
