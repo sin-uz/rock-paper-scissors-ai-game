@@ -1,6 +1,6 @@
 import random as rd
 
-from domain import Move, Outcome, MOVE_BEATS, MOVE_LOSES
+from .domain import Move, Outcome, MOVE_BEATS, MOVE_LOSES
 
 
 class NaiveStrategy:
