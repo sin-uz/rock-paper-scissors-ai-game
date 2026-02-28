@@ -17,6 +17,19 @@ class ThumbDirection(Enum):
     DOWN = auto()
 
 
+# sync
+class SyncPhase(str, Enum):
+    WAITING = "WAITING"
+    SHAKING = "SHAKING"
+    LOCKING = "LOCKING"
+
+@dataclass(frozen=True)
+class SyncStatus:
+    phase: SyncPhase
+    cycles: int
+    progress: float
+
+
 # records
 @dataclass(frozen=True, slots=True)
 class RoundRecord:

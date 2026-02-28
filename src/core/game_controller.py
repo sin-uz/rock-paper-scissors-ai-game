@@ -5,26 +5,26 @@ from cv2 import VideoCapture
 from src.ml.hand_detector import HandDetector
 from src.core.game_logic import GameLogic
 from src.logic.game_ui import GameUI
-from src.core.strategies import ResearchBasedStrategy
 from .game_state import GameState
 from ..ui.utils.bridge import UiBridge, EventFrameChanged
 
 
 class GameController:
-
     def __init__(self,
                  classifier,
+                 synchronizer,
+                 computer_strategy,
                  bridge: UiBridge,
                  *,
-                 computer_strategy: ResearchBasedStrategy = None,
-                 cap: VideoCapture = None
+                 cap: VideoCapture = None,
                  ):
 
         self._ui_bridge = bridge
         self.logic = GameLogic(
             self._ui_bridge,
-            classifier = classifier,
-            computer_strategy=computer_strategy or ResearchBasedStrategy()
+            classifier=classifier,
+            synchronizer=synchronizer,
+            computer_strategy=computer_strategy
         )
         self.ui = GameUI()
         self._cap = cap or VideoCapture(0)
@@ -36,7 +36,7 @@ class GameController:
             static_image_mode=False,
             max_num_hands=2,
             min_detection_confidence=0.7,
-            min_tracking_confidence=0.7
+            min_tracking_confidence=0.5
         ) as detector:
             while self._cap.isOpened():
                 if self._stop_detection:
@@ -49,7 +49,9 @@ class GameController:
                 detected_hands = detector.detect(frame)
                 self.update(detected_hands, frame)
 
-                self._ui_bridge.event_frame_changed.emit(EventFrameChanged(frame, detected_hands))
+                self._ui_bridge.event_frame_changed.emit(
+                    EventFrameChanged(frame, detected_hands)
+                )
     @property
     def player_score(self):
         return self.logic.player_score

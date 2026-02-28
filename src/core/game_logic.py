@@ -7,11 +7,16 @@ from src.ui.utils.bridge import UiBridge, EventGameOver, EventGameCountdown, Eve
 
 
 class GameLogic:
-
-    def __init__(self, ui_bridge: UiBridge, classifier, computer_strategy):
+    def __init__(self,
+                 ui_bridge: UiBridge,
+                 classifier,
+                 synchronizer,
+                 computer_strategy
+                 ):
         self._ui_bridge = ui_bridge
 
         self.classifier = classifier
+        self.synchronizer = synchronizer
         self.computer_strategy = computer_strategy
         
         self.state = GameState.IDLE
@@ -29,7 +34,6 @@ class GameLogic:
         self.current_outcome = None
     
     def reset(self):
-
         self.state = GameState.IDLE
         self.player_score = 0
         self.computer_score = 0
@@ -41,11 +45,12 @@ class GameLogic:
         self.current_player_move = None
         self.current_computer_move = None
         self.current_outcome = None
-        ##self.computer_strategy.reset()
+
+        self.synchronizer.reset()
     
     def update(self, primary_hand, frame):
         current_time = time.time()
-        side, landmarks = primary_hand if primary_hand else (None, None) #unpack krotka
+        side, landmarks = primary_hand if primary_hand else (None, None)
 
         if self.state not in [GameState.IDLE, GameState.GAME_OVER]:
             if self._check_quit_gesture(landmarks, current_time):
@@ -126,14 +131,18 @@ class GameLogic:
     
     def _handle_round_active(self, side, landmarks, current_time, frame):
         if not landmarks:
+            self.synchronizer.reset()
             return
         
-        player_move = self.classifier.determine_move(side, landmarks)
+        player_move, sync_status = self.synchronizer.update(
+            side, landmarks, current_time
+        )
+        print(f"Sync status: {sync_status}")
+
         if player_move is None:
             return
       
         computer_move = self.computer_strategy.select_move(self.match_history)
-        
         outcome = evaluate_round(player_move, computer_move)
         
         self.current_player_move = player_move
