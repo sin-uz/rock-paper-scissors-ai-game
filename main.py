@@ -1,6 +1,8 @@
 import sys
 import threading
 
+import cv2
+import cv2_enumerate_cameras
 from PySide6.QtWidgets import QApplication
 
 from src.core.game_controller import GameController
@@ -9,23 +11,31 @@ from src.core.round_synchronizer import RoundSynchronizer
 from src.core.strategies import ResearchBasedStrategy
 from src.ui.utils.bridge import UiBridge
 from src.ui.window import Window
+from src.util.config import Config
 
 
 def main():
+    config = Config.load_config()
+
     app = QApplication(sys.argv)
     bridge = UiBridge()
 
     classifier = VectorBasedClassifier()
     synchronizer = RoundSynchronizer(classifier)
     computer_strategy = ResearchBasedStrategy()
-    
+
     controller = GameController(
-        classifier, synchronizer, computer_strategy, bridge,
+        classifier=classifier,
+        synchronizer=synchronizer,
+        computer_strategy=computer_strategy,
+        bridge=bridge,
+        detection_camera_index=config.detection_camera,
+        showing_camera_index=config.showing_camera
     )
     game_window = Window(
-        controller, show_ai_analytics=True,
+        controller,
+        show_ai_analytics=config.show_ai_analysis,
     )
-
 
     bridge.event_frame_changed.connect(
         game_window.content_frame.update_camera_frame
@@ -62,7 +72,6 @@ def main():
     sys.exit(
         app.exec()
     )
-
 
 
 if __name__ == "__main__":
