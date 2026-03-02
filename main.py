@@ -1,8 +1,6 @@
 import sys
 import threading
 
-import cv2
-import cv2_enumerate_cameras
 from PySide6.QtWidgets import QApplication
 
 from src.core.game_controller import GameController

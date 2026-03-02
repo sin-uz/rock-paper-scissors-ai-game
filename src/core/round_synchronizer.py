@@ -36,7 +36,7 @@ class RoundSynchronizer:
             return None, self.status()
 
         wrist_y_coord= self._get_coordinate(landmarks, self._HL.WRIST, 1)
-        print(f"wrist: {wrist_y_coord}")
+        # print(f"wrist: {wrist_y_coord}")
 
         if self._last_t is None:
             self._last_t = t

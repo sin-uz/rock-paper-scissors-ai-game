@@ -85,15 +85,21 @@ class Window(QMainWindow):
         if data is None or data.count_down_time is None:
             return
 
-        print("Game countdown: ", data.count_down_time)
-        self._content.change_content(TypeOfScreen.DURING_ROUND)
+        during_round_screen = self._content.during_round_screen
+        if during_round_screen is not None:
+            during_round_screen.set_round_title(f"Round starts in {data.count_down_time}...")
+            during_round_screen.set_round_subtitle("Get ready!")
 
-        self._content.camera_frame.show_alert(f"Round starts in {data.count_down_time}...", duration=1000)
 
     def on_game_round_active(self, data: EventGameRoundActive):
         print("Game round active.", data)
 
         self._content.change_content(TypeOfScreen.DURING_ROUND)
+        during_round_screen = self._content.during_round_screen
+
+        if during_round_screen is not None:
+            during_round_screen.set_round_title("Round in progress")
+            during_round_screen.set_round_subtitle("Waiting for player move...")
 
     def on_game_round_result(self, data: EventGameRoundResult):
         print("Game round result.", data)

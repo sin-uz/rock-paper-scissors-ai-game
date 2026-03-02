@@ -137,7 +137,7 @@ class GameLogic:
         player_move, sync_status = self.synchronizer.update(
             side, landmarks, current_time
         )
-        print(f"Sync status: {sync_status}")
+        # print(f"Sync status: {sync_status}")
 
         if player_move is None:
             return

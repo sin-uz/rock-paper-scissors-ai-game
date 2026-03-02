@@ -11,8 +11,6 @@ class PreGameScreen(ScreenBase):
     def __init__(self,
                  camera_frame: CameraFrame,
                  parent=None,
-                 *,
-                 is_during_round=False,
                  ) -> None:
         super().__init__(parent)
         self.setObjectName("beforeStartContent")
@@ -31,7 +29,6 @@ class PreGameScreen(ScreenBase):
         self._instruction_bar = self._build_instruction_bar()
         helpers.addWidget(self._instruction_bar, 0, 0, alignment=Qt.AlignmentFlag.AlignHCenter)
         root.addLayout(helpers)
-        self.set_helpers_visible(not is_during_round)
 
     @property
     def camera(self):
@@ -40,9 +37,6 @@ class PreGameScreen(ScreenBase):
     def reset(self) -> None:
         self._camera.set_scores(0, 0)
 
-    def set_helpers_visible(self, visible: bool) -> None:
-        if self._instruction_bar is not None:
-            self._instruction_bar.setVisible(visible)
 
     def update_scores(self, player_score: int, computer_score: int) -> None:
         self._camera.set_scores(player_score, computer_score)

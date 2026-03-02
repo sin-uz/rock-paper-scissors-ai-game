@@ -470,7 +470,6 @@
     background-color: #ffffff;
     border: 6px solid #33c758;
     border-radius: 36px;
-    min-height: 420px;
 }
 #roundFrameContainer {
     background-color: #e2e8f0;
@@ -514,7 +513,7 @@
 }
 #roundAiPanel {
     background-color: #ffffff;
-    border: 1px solid rgba(226, 232, 240, 0.9);
+    border: 6px solid #ff3b30;
     border-radius: 36px;
 }
 #roundAiBadge {
