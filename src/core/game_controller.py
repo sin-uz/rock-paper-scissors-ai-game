@@ -2,7 +2,7 @@ import cv2
 
 from src.ml.hand_detector import HandDetector
 from src.core.game_logic import GameLogic
-from src.logic.game_ui import GameUI
+
 from .game_state import GameState
 from ..ui.utils.bridge import UiBridge, EventFrameChanged
 
@@ -26,7 +26,6 @@ class GameController:
             synchronizer=synchronizer,
             computer_strategy=computer_strategy
         )
-        self.ui = GameUI()
         self._cap = cap or cv2.VideoCapture(detection_camera_index)
         self._showing_cap = cv2.VideoCapture(showing_camera_index) if showing_camera_index is not None else None
         self._stop_detection = False
@@ -90,8 +89,6 @@ class GameController:
 
         self.logic.update(primary_hand, frame)
 
-    def render_ui(self, frame):
-        return self.ui.render(frame, self.logic)
 
     def is_game_over(self):
         return self.logic.state == GameState.GAME_OVER
