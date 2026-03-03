@@ -1,3 +1,4 @@
+import logging
 import sys
 import threading
 
@@ -13,6 +14,13 @@ from src.util.config import Config
 
 
 def main():
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        datefmt="%H:%M:%S",
+        force=True,
+    )
+
     config = Config.load_config()
 
     app = QApplication(sys.argv)

@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
 from src.core.domain import Outcome, Move
 from src.ui.components.game_panel import GamePanel
 from src.ui.screens.screen_base import ScreenBase
-from src.ui.utils.bridge import EventGameRoundResult, EventFrameChanged
+from src.ui.utils.bridge import EventGameRoundResult
 
 
 class GameScreen(ScreenBase):
@@ -40,7 +40,6 @@ class GameScreen(ScreenBase):
         self._alert_timer.setSingleShot(True)
         self._alert_timer.timeout.connect(self._clear_alert)
 
-
         root = QVBoxLayout(self)
         root.setContentsMargins(24, 24, 24, 24)
         root.setSpacing(0)
@@ -68,7 +67,6 @@ class GameScreen(ScreenBase):
         mid.addWidget(self._player_panel, 1)
         mid.addWidget(self._ai_panel, 1)
         root.addLayout(mid, 1)
-
 
     def set_round_title(self, title: str) -> None:
         self._round_title.setText(title)

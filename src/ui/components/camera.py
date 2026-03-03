@@ -1,19 +1,19 @@
 import time
 
-
 from PySide6.QtCore import Qt, QTimer, QRect
 from PySide6.QtGui import QPixmap, QPainter, QPainterPath
 from PySide6.QtWidgets import QFrame, QLabel, QSizePolicy, QGraphicsDropShadowEffect, QGraphicsBlurEffect, \
     QStackedLayout
 
 from src.ui.components.camera_score import CameraScoreOverlay
-from src.ui.visualizer import AnnotationsVisualizer
+from src.ui.utils.visualizer import AnnotationsVisualizer
 
 
 class CameraFrame(QFrame):
     """
     It is a wrapper around QFrame that handles video capture and display.
     """
+
     def __init__(self):
         super().__init__()
         self._last_frame_ts = None

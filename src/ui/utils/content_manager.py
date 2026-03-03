@@ -1,7 +1,5 @@
 import time
 
-import cv2
-from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import QWidget, QStackedLayout
 
 from src.core.game_controller import GameController
@@ -11,12 +9,13 @@ from src.ui.screens.game_screen import GameScreen
 from src.ui.screens.pre_game_screen import PreGameScreen
 from src.ui.screens.screen_base import ScreenBase
 from src.ui.utils.type_of_screen import TypeOfScreen
-from src.ui.utils.bridge import EventFrameChanged, EventGameRoundResult, EventGameCountdown
-from src.ui.visualizer import AnnotationsVisualizer
+from src.ui.utils.bridge import EventFrameChanged, EventGameRoundResult
+from src.ui.utils.visualizer import AnnotationsVisualizer
 
 
 class ContentManager(QWidget):
-    def __init__(self, parent=None, /, show_ai_analytics: bool = False, game_controller: GameController = None, mirror_camera: bool = True):
+    def __init__(self, parent=None, /, show_ai_analytics: bool = False, game_controller: GameController = None,
+                 mirror_camera: bool = True):
         super().__init__(parent)
 
         self._show_ai_analytics = show_ai_analytics
@@ -29,7 +28,7 @@ class ContentManager(QWidget):
         self._fps = 0.0
 
         self._game_controller = game_controller
-        self._frame_pending: bool = False   # frame-drop guard
+        self._frame_pending: bool = False  # frame-drop guard
 
         self._stack = QStackedLayout(self)
         self._stack.setContentsMargins(0, 0, 0, 0)
@@ -80,12 +79,12 @@ class ContentManager(QWidget):
                 if self._show_ai_analytics:
                     self._update_fps()
                     self._visualizer.draw_analytics(data.frame, self._fps, len(data.detected_hands))
-                    data.frame = self._visualizer.render(data.frame, data.detected_hands, mirror_display=self._mirror_camera)
+                    data.frame = self._visualizer.render(data.frame, data.detected_hands,
+                                                         mirror_display=self._mirror_camera)
 
                 screen.update_frame(data.get_pixmap())
         finally:
             self._frame_pending = False
-
 
     @property
     def camera_frame(self) -> CameraFrame:
@@ -108,8 +107,6 @@ class ContentManager(QWidget):
     @property
     def screens(self) -> dict[TypeOfScreen, ScreenBase]:
         return self._screens
-
-
 
     def update_scores(self, player_score: int, computer_score: int) -> None:
         self._camera_frame.set_scores(

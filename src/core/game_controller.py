@@ -1,10 +1,11 @@
+import time
 import cv2
 
 from src.ml.hand_detector import HandDetector
 from src.core.game_logic import GameLogic
 
-from .game_state import GameState
-from ..ui.utils.bridge import UiBridge, EventFrameChanged
+from src.core.game_state import GameState
+from src.ui.utils.bridge import UiBridge, EventFrameChanged
 
 
 class GameController:
@@ -40,6 +41,7 @@ class GameController:
         ) as detector:
             while self._cap.isOpened():
                 if self._stop_detection:
+                    time.sleep(0.05)
                     continue
 
                 reft, frame = self._cap.read()
@@ -78,9 +80,7 @@ class GameController:
         self.logic.reset()
 
     def update(self, detected_hands: dict[str, list[tuple[float, float, float]]], frame: cv2.typing.MatLike) -> None:
-        """
-        Priorytet wykrywania ręki prawej nad lewą
-        """
+        """Right hand takes priority over left hand for gesture detection."""
         primary_hand = None
         if "Right" in detected_hands:
             primary_hand = ("Right", detected_hands["Right"])
@@ -88,7 +88,6 @@ class GameController:
             primary_hand = ("Left", detected_hands["Left"])
 
         self.logic.update(primary_hand, frame)
-
 
     def is_game_over(self):
         return self.logic.state == GameState.GAME_OVER
@@ -99,3 +98,5 @@ class GameController:
     def close(self):
         if self._cap.isOpened():
             self._cap.release()
+        if self._showing_cap is not None and self._showing_cap.isOpened():
+            self._showing_cap.release()

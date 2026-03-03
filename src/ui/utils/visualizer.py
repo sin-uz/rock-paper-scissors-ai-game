@@ -17,7 +17,7 @@ class AnnotationsVisualizer:
             landmarks_px = self._to_pixel_points(
                 landmarks_norm, width, height, mirror_display
             )
-            
+
             if not landmarks_px:
                 continue
 

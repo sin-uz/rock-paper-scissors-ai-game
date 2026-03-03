@@ -1,15 +1,13 @@
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QColor, QPixmap
+from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QLabel, QFrame,
-    QPushButton, QLineEdit, QSizePolicy, QWidget,
+    QPushButton, QSizePolicy, QWidget,
 )
 from qt_material_icons import MaterialIcon
-from pathlib import Path
 
 from src.ui.screens.screen_base import ScreenBase
 
-_ASSETS_DIR = Path(__file__).resolve().parents[1] / "assets"
 
 
 def _icon_label(name: str, color: str, icon_size: int = 48) -> QLabel:

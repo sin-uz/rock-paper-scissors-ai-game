@@ -50,8 +50,10 @@ class PreGameScreen(ScreenBase):
         layout = QHBoxLayout(bar)
         layout.setContentsMargins(16, 10, 16, 10)
         layout.setSpacing(24)
-        layout.addWidget(self._build_gesture_tile("thumb_up", "Thumbs Up", "To Start The Game", icon_color=QColor("#33c758")))
-        layout.addWidget(self._build_gesture_tile("thumb_down", "Thumbs Down", "To Finish The Game", icon_color=QColor("#ff3b30")))
+        layout.addWidget(
+            self._build_gesture_tile("thumb_up", "Thumbs Up", "To Start The Game", icon_color=QColor("#33c758")))
+        layout.addWidget(
+            self._build_gesture_tile("thumb_down", "Thumbs Down", "To Finish The Game", icon_color=QColor("#ff3b30")))
         return bar
 
     def _build_gesture_tile(self, icon_name: str, title: str, subtitle: str, *, icon_color: QColor) -> QFrame:

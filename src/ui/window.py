@@ -1,4 +1,6 @@
-from PySide6.QtCore import QTimer
+import logging
+from pathlib import Path
+
 from PySide6.QtWidgets import (
 
     QVBoxLayout,
@@ -8,7 +10,6 @@ from PySide6.QtWidgets import (
 from src.core.domain import ThumbDirection
 from src.core.game_state import GameState
 from src.ui.components.bottom import Bottom
-from src.ui.components.camera import CameraFrame
 from src.ui.utils.content_manager import ContentManager
 from src.ui.components.header import Header
 from src.core.game_controller import GameController
@@ -16,9 +17,13 @@ from src.ui.utils.type_of_screen import TypeOfScreen
 from src.ui.utils.bridge import EventScoreChanged, EventGameIdle, EventGameCountdown, EventGameRoundActive, \
     EventGameRoundResult, EventGameOver, EventGestureProgress
 
+_ASSETS_DIR = Path(__file__).resolve().parent / "assets"
+_logger = logging.getLogger(__name__)
+
 
 class Window(QMainWindow):
-    def __init__(self, game_controller: GameController, /, *, show_ai_analytics: bool = False, mirror_camera: bool = True):
+    def __init__(self, game_controller: GameController, /, *, show_ai_analytics: bool = False,
+                 mirror_camera: bool = True):
         super().__init__()
 
         self._show_ai_analytics = show_ai_analytics
@@ -28,10 +33,10 @@ class Window(QMainWindow):
         self.setWindowTitle("SINUZ - Kamień Papier Nożyce")
         self.resize(1280, 800)
 
-
         self._init_ui()
 
-        self.setStyleSheet(open("./src/ui/assets/style.qss").read())
+        with open(_ASSETS_DIR / "style.qss") as f:
+            self.setStyleSheet(f.read())
 
     def _init_ui(self):
         central = QWidget(self)
@@ -61,7 +66,7 @@ class Window(QMainWindow):
         self.setCentralWidget(central)
 
     def on_gesture_progress(self, data: EventGestureProgress):
-        print("Gesture progress: ", data.progress, "Thumb direction: ", data.thumb_direction)
+        _logger.debug("Gesture progress: %s  Thumb direction: %s", data.progress, data.thumb_direction)
         if data.thumb_direction == ThumbDirection.UP:
             self._content.camera_frame.show_alert(
                 f"Keep your thumb up to start the game! ({int(data.progress * 100)}%)",
@@ -79,14 +84,12 @@ class Window(QMainWindow):
                         priority=1
                     )
 
-
-
     def on_game_started(self, data: GameState):
-        print("Game started.", data)
+        _logger.debug("Game started: %s", data)
         self._content.change_content(TypeOfScreen.DURING_ROUND)
 
     def on_game_idle(self, data: EventGameIdle):
-        print("Game is idle.", data)
+        _logger.debug("Game is idle: %s", data)
         self._content.change_content(TypeOfScreen.BEFORE_START)
 
     def on_game_countdown(self, data: EventGameCountdown):
@@ -102,24 +105,22 @@ class Window(QMainWindow):
             )
 
     def on_game_round_active(self, data: EventGameRoundActive):
-        print("Game round active.", data)
+        _logger.debug("Game round active: %s", data)
         self._content.change_content(TypeOfScreen.DURING_ROUND)
 
-
     def on_game_round_result(self, data: EventGameRoundResult):
-        print("Game round result.", data)
+        _logger.debug("Game round result: %s", data)
         self._content.change_content(TypeOfScreen.RESULT_OF_ROUND)
         self._content.on_game_round_result(data)
 
     def on_game_over(self, data: EventGameOver):
-        print("Game over.", data)
+        _logger.debug("Game over: %s", data)
         self._content.change_content(TypeOfScreen.END_OF_GAME)
         self._content.update_game_over(data.player_score, data.computer_score)
         self._game_controller.set_stop_detection(True)
-        # self._score_frame.set_game_started(False)
 
     def on_score_change(self, data: EventScoreChanged):
-        print("Player score: ", data.player_score, "Computer score: ", data.computer_score)
+        _logger.debug("Player score: %s  Computer score: %s", data.player_score, data.computer_score)
         self._content.update_scores(
             player_score=data.player_score,
             computer_score=data.computer_score,
@@ -133,9 +134,3 @@ class Window(QMainWindow):
         if getattr(self, "_game_controller", None) is not None:
             self._game_controller.close()
         super().closeEvent(event)
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-
-    def restart_content(self):
-        self._init_ui()

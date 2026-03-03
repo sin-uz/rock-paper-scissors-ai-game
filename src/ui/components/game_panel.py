@@ -1,8 +1,7 @@
 from pathlib import Path
 
-import numpy as np
 from PySide6.QtCore import Qt, QRectF, QSize
-from PySide6.QtGui import QPainter, QPen, QColor, QPixmap, QImage, QPainterPath, QRegion
+from PySide6.QtGui import QPainter, QPen, QColor, QPixmap, QPainterPath, QRegion
 from PySide6.QtWidgets import (
     QFrame, QHBoxLayout, QLabel, QSizePolicy, QVBoxLayout, QWidget,
 )
@@ -12,13 +11,13 @@ class _DashedBorderOverlay(QWidget):
     """Transparent overlay that paints a rounded dashed border and holds UI widgets."""
 
     def __init__(
-        self,
-        parent=None,
-        *,
-        border_color: QColor | None = None,
-        border_width: int = 2,
-        border_margin: int = 20,
-        corner_radius: float = 20.0,
+            self,
+            parent=None,
+            *,
+            border_color: QColor | None = None,
+            border_width: int = 2,
+            border_margin: int = 20,
+            corner_radius: float = 20.0,
     ):
         super().__init__(parent)
         self._border_color = border_color if border_color is not None else QColor(51, 199, 89, 110)
@@ -73,24 +72,24 @@ class GamePanel(QFrame):
     """
 
     def __init__(
-        self,
-        parent=None,
-        *,
-        label: str = "PLAYER",
-        pill_color: QColor | None = None,
-        pill_text_color: QColor | None = None,
-        border_color: QColor | None = None,
-        border_width: int = 2,
-        border_margin: int = 20,
-        corner_radius: float = 30.0,
-        show_detected_card: bool = True,
-        detected_card_title: str = "Detected Gesture",
+            self,
+            parent=None,
+            *,
+            label: str = "PLAYER",
+            pill_color: QColor | None = None,
+            pill_text_color: QColor | None = None,
+            border_color: QColor | None = None,
+            border_width: int = 2,
+            border_margin: int = 20,
+            corner_radius: float = 30.0,
+            show_detected_card: bool = True,
+            detected_card_title: str = "Detected Gesture",
     ):
         super().__init__(parent)
         self._corner_radius = corner_radius
         self._last_pixmap: QPixmap | None = None
         self._last_rendered_size: QSize = QSize()  # cache: skip redraw when size unchanged
-        self._is_live: bool = False                 # live frames use fast scaling
+        self._is_live: bool = False  # live frames use fast scaling
         self._detected_value: QLabel | None = None
         self._overlay: QWidget | None = None
 
@@ -289,4 +288,3 @@ class GamePanel(QFrame):
         path.addRoundedRect(QRectF(self.rect()), self._corner_radius, self._corner_radius)
         region = QRegion(path.toFillPolygon().toPolygon())
         self.setMask(region)
-

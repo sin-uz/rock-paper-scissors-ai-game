@@ -1,8 +1,5 @@
-import cv2
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QWidget
-
-from src.ui.utils.bridge import EventFrameChanged
 
 
 class ScreenBase(QWidget):

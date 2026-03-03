@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import cv2
 from PySide6.QtCore import Signal, QObject
@@ -6,6 +6,7 @@ from PySide6.QtGui import QPixmap, QImage
 
 from src.core.domain import RoundRecord, ThumbDirection
 from src.core.game_state import GameState
+
 
 class EventWithFrame:
     def __init__(self, frame: cv2.typing.MatLike):
@@ -26,53 +27,51 @@ class EventWithFrame:
         )
         return QPixmap.fromImage(image)
 
-@dataclass
+
 class EventFrameChanged(EventWithFrame):
     def __init__(self, frame: cv2.typing.MatLike, detected_hands: dict[str, list[tuple[float, float, float]]]):
         super().__init__(frame)
         self.detected_hands = detected_hands
 
+
 @dataclass
 class EventScoreChanged:
-    def __init__(self, player_score: int, computer_score: int):
-        self.player_score = player_score
-        self.computer_score = computer_score
+    player_score: int
+    computer_score: int
 
 
 @dataclass
 class EventGameIdle:
-    def __init__(self):
-        pass
+    pass
+
 
 @dataclass
 class EventGameCountdown:
-    def __init__(self, count_down_time: int):
-        self.count_down_time = count_down_time
+    count_down_time: int
+
 
 @dataclass
 class EventGameRoundActive:
-    def __init__(self):
-        pass
+    pass
 
-@dataclass
+
 class EventGameRoundResult(EventWithFrame):
     def __init__(self, round_record: RoundRecord, frame: cv2.typing.MatLike):
         super().__init__(frame)
         self.round_record = round_record
 
+
 @dataclass
 class EventGameOver:
-    def __init__(self, player_score: int, computer_score: int, match_history: list[RoundRecord]):
-        self.player_score = player_score
-        self.computer_score = computer_score
-        self.match_history = match_history
+    player_score: int
+    computer_score: int
+    match_history: list = field(default_factory=list)
 
 
 @dataclass
 class EventGestureProgress:
-    def __init__(self, progress: float, thumb_direction: ThumbDirection):
-        self.progress = progress
-        self.thumb_direction = thumb_direction
+    progress: float
+    thumb_direction: ThumbDirection
 
 
 class UiBridge(QObject):
@@ -85,5 +84,3 @@ class UiBridge(QObject):
     event_game_round_active = Signal(EventGameRoundActive)
     event_game_round_result = Signal(EventGameRoundResult)
     event_game_over = Signal(EventGameOver)
-
-
