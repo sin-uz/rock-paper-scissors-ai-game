@@ -27,12 +27,10 @@ def main():
     bridge = UiBridge()
 
     classifier = VectorBasedClassifier()
-    synchronizer = RoundSynchronizer(classifier)
     computer_strategy = ResearchBasedStrategy()
 
     controller = GameController(
         classifier=classifier,
-        synchronizer=synchronizer,
         computer_strategy=computer_strategy,
         bridge=bridge,
         detection_camera_index=config.detection_camera,

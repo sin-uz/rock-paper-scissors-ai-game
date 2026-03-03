@@ -11,7 +11,6 @@ from src.ui.utils.bridge import UiBridge, EventFrameChanged
 class GameController:
     def __init__(self,
                  classifier,
-                 synchronizer,
                  computer_strategy,
                  bridge: UiBridge,
                  *,
@@ -24,7 +23,6 @@ class GameController:
         self.logic = GameLogic(
             self._ui_bridge,
             classifier=classifier,
-            synchronizer=synchronizer,
             computer_strategy=computer_strategy
         )
         self._cap = cap or cv2.VideoCapture(detection_camera_index)

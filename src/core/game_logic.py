@@ -10,13 +10,11 @@ class GameLogic:
     def __init__(self,
                  ui_bridge: UiBridge,
                  classifier,
-                 synchronizer,
                  computer_strategy
                  ):
         self._ui_bridge = ui_bridge
 
         self.classifier = classifier
-        self.synchronizer = synchronizer
         self.computer_strategy = computer_strategy
         
         self.state = GameState.IDLE
@@ -46,8 +44,6 @@ class GameLogic:
         self.current_computer_move = None
         self.current_outcome = None
 
-        self.synchronizer.reset()
-    
     def update(self, primary_hand, frame):
         current_time = time.time()
         side, landmarks = primary_hand if primary_hand else (None, None)
@@ -133,13 +129,9 @@ class GameLogic:
     
     def _handle_round_active(self, side, landmarks, current_time, frame):
         if not landmarks:
-            self.synchronizer.reset()
             return
-        
-        player_move, sync_status = self.synchronizer.update(
-            side, landmarks, current_time
-        )
-        print(f"Sync status: {sync_status}")
+
+        player_move = self.classifier.determine_move(side, landmarks)
 
         if player_move is None:
             return
@@ -180,15 +172,6 @@ class GameLogic:
         elapsed = current_time - self.result_start_time
         if elapsed >= GameConfig.RESULT_DURATION:
             self.state = GameState.COUNTDOWN
-            # self._ui_bridge.state_changed.emit(StateChangeEventData(
-            #     self.state,
-            #     player_score=self.player_score,
-            #     computer_score=self.computer_score,
-            #     match_history=self.match_history,
-            # ))
-            # self._ui_bridge.event_game_countdown.emit(EventGameCountdown(
-            #     count_down_time=self.get_countdown_value()
-            # ))
             self.countdown_start_time = current_time
             self.current_player_move = None
             self.current_computer_move = None
