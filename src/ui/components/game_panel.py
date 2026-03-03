@@ -166,20 +166,8 @@ class GamePanel(QFrame):
     # Public API — frame / pixmap
     # ------------------------------------------------------------------
 
-    def set_frame(self, frame, *, mirror: bool = False) -> None:
-        """Convert a raw cv2/numpy BGR frame and display it (fast path)."""
-        if frame is None:
-            return
-        # Flip channels BGR→RGB using a view (zero-copy when possible)
-        if mirror:
-            rgb = np.ascontiguousarray(frame[:, ::-1, ::-1])
-        else:
-            rgb = np.ascontiguousarray(frame[:, :, ::-1])
-        h, w, ch = rgb.shape
-        image = QImage(rgb.data, w, h, w * ch, QImage.Format.Format_RGB888)
-        # Keep the numpy array alive until QImage is consumed
-        image.ndarray = rgb  # type: ignore[attr-defined]
-        pixmap = QPixmap.fromImage(image)
+    def set_frame(self, image: QPixmap) -> None:
+        pixmap = image
         self._last_pixmap = pixmap
         self._is_live = True
         self._last_rendered_size = QSize()  # invalidate cache so frame always renders

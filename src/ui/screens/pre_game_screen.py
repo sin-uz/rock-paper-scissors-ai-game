@@ -5,6 +5,7 @@ from qt_material_icons import MaterialIcon
 
 from src.ui.components.camera import CameraFrame
 from src.ui.screens.screen_base import ScreenBase
+from src.ui.utils.bridge import EventFrameChanged
 
 
 class PreGameScreen(ScreenBase):
@@ -37,6 +38,8 @@ class PreGameScreen(ScreenBase):
     def reset(self) -> None:
         self._camera.set_scores(0, 0)
 
+    def update_frame(self, data: EventFrameChanged) -> None:
+        self._camera.update_frame(data)
 
     def update_scores(self, player_score: int, computer_score: int) -> None:
         self._camera.set_scores(player_score, computer_score)

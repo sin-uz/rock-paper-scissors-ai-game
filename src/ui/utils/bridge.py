@@ -2,14 +2,34 @@ from dataclasses import dataclass
 
 import cv2
 from PySide6.QtCore import Signal, QObject
+from PySide6.QtGui import QPixmap, QImage
 
 from src.core.domain import RoundRecord, ThumbDirection
 from src.core.game_state import GameState
 
-@dataclass
-class EventFrameChanged:
-    def __init__(self, frame: cv2.typing.MatLike, detected_hands: dict[str, list[tuple[float, float, float]]]):
+class EventWithFrame:
+    def __init__(self, frame: cv2.typing.MatLike):
         self.frame = frame
+
+    def mirror_frame(self) -> None:
+        self.frame = cv2.flip(self.frame, 1)
+
+    def get_pixmap(self) -> QPixmap:
+        rgb_frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
+        height, width, _ = rgb_frame.shape
+        image = QImage(
+            rgb_frame.data,
+            width,
+            height,
+            width * 3,
+            QImage.Format.Format_RGB888,
+        )
+        return QPixmap.fromImage(image)
+
+@dataclass
+class EventFrameChanged(EventWithFrame):
+    def __init__(self, frame: cv2.typing.MatLike, detected_hands: dict[str, list[tuple[float, float, float]]]):
+        super().__init__(frame)
         self.detected_hands = detected_hands
 
 @dataclass
@@ -35,10 +55,10 @@ class EventGameRoundActive:
         pass
 
 @dataclass
-class EventGameRoundResult:
+class EventGameRoundResult(EventWithFrame):
     def __init__(self, round_record: RoundRecord, frame: cv2.typing.MatLike):
+        super().__init__(frame)
         self.round_record = round_record
-        self.frame = frame
 
 @dataclass
 class EventGameOver:

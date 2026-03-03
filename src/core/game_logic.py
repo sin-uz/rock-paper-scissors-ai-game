@@ -72,6 +72,8 @@ class GameLogic:
         direction = self.classifier.determine_hand_direction(landmarks) if landmarks else None
 
         if direction == ThumbDirection.DOWN: ##
+            if self.countdown_start_time is not None:
+                self.countdown_start_time = current_time
             if self.gesture_start_time is None:
                 self.gesture_start_time = current_time
 
@@ -137,7 +139,7 @@ class GameLogic:
         player_move, sync_status = self.synchronizer.update(
             side, landmarks, current_time
         )
-        # print(f"Sync status: {sync_status}")
+        print(f"Sync status: {sync_status}")
 
         if player_move is None:
             return

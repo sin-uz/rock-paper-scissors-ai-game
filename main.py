@@ -33,6 +33,7 @@ def main():
     game_window = Window(
         controller,
         show_ai_analytics=config.show_ai_analysis,
+        mirror_camera=config.mirror_camera
     )
 
     bridge.event_frame_changed.connect(

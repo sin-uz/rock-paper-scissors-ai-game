@@ -27,7 +27,7 @@ class AnnotationsVisualizer:
         return image
 
     @staticmethod
-    def draw_analytics(image, fps, hands_count):
+    def draw_analytics(image: cv2.typing.MatLike, fps: float, hands_count: int) -> cv2.typing.MatLike:
         analytics_lines = [
             f"FPS: {fps:0.1f}",
             f"Hands: {hands_count}",
@@ -38,7 +38,7 @@ class AnnotationsVisualizer:
             cv2.putText(
                 image,
                 line,
-                (16, y),
+                (200, y),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.6,
                 (0, 255, 255),

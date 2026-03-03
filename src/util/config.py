@@ -7,6 +7,7 @@ class Config:
         self.show_ai_analysis: bool = False
         self.detection_camera: int = 0
         self.showing_camera: Optional[int] = None
+        self.mirror_camera: bool = True
 
     def __create_config_file(self):
         with open("config.json", "w") as f:
@@ -14,6 +15,7 @@ class Config:
                 "show_ai_analysis": self.show_ai_analysis,
                 "detection_camera_index": self.detection_camera,
                 "showing_camera_index": self.showing_camera,
+                "mirror_camera": True
             }, f, indent=4)
 
     @staticmethod
@@ -25,8 +27,11 @@ class Config:
                 config.show_ai_analysis = data.get("show_ai_analysis", False)
                 config.detection_camera = data.get("detection_camera_index", 0)
                 config.showing_camera = data.get("showing_camera_index", None)
+                config.mirror_camera = data.get("mirror_camera", True)
                 return config
         except FileNotFoundError:
             config = Config()
             config.__create_config_file()
             return config
+
+

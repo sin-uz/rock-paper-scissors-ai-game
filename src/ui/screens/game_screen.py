@@ -1,5 +1,5 @@
-from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QColor
+from PySide6.QtCore import Qt, QSize, QTimer
+from PySide6.QtGui import QColor, QPixmap
 from PySide6.QtWidgets import (
     QLabel, QVBoxLayout, QHBoxLayout, QFrame,
 )
@@ -11,7 +11,11 @@ from src.ui.utils.bridge import EventGameRoundResult, EventFrameChanged
 
 
 class GameScreen(ScreenBase):
-    def __init__(self, parent=None, during_round: bool = True):
+    def __init__(self,
+                 parent=None,
+                 /,
+                 during_round: bool = True,
+                 ):
         super().__init__(parent)
         self.setObjectName("roundResultContent")
         self._player_score = QLabel("0")
@@ -26,6 +30,16 @@ class GameScreen(ScreenBase):
         self._ai_has_result: bool = False
         self._ai_thinking_shown: bool = False
         self._during_round: bool = during_round
+
+        self._round_title_before_alert = self._round_title.text()
+        self._round_title_object_name_before_alert = self._round_title.objectName()
+        self._round_subtitle_before_alert = self._round_subtitle.text()
+
+        self._alert_priority = None
+        self._alert_timer = QTimer(self)
+        self._alert_timer.setSingleShot(True)
+        self._alert_timer.timeout.connect(self._clear_alert)
+
 
         root = QVBoxLayout(self)
         root.setContentsMargins(24, 24, 24, 24)
@@ -56,7 +70,6 @@ class GameScreen(ScreenBase):
         root.addLayout(mid, 1)
 
 
-
     def set_round_title(self, title: str) -> None:
         self._round_title.setText(title)
         self._round_title.style().unpolish(self._round_title)
@@ -67,13 +80,27 @@ class GameScreen(ScreenBase):
         self._round_subtitle.style().unpolish(self._round_subtitle)
         self._round_subtitle.style().polish(self._round_subtitle)
 
-    @property
-    def camera(self):
-        return self
+    def show_alert(self, title: str, subtitle: str = "", duration: int = 2000, priority: int = 0) -> None:
+        if self._alert_priority is not None and priority < self._alert_priority:
+            return
 
-    def update_frame(self, data: EventFrameChanged) -> None:
+        self._alert_priority = priority
+        self._save_current_title_and_subtitle()
+
+        self._round_title.setText(title)
+        self._round_title.setObjectName("roundTitleAlert")
+        self._round_subtitle.setText(subtitle)
+
+        self._round_title.style().unpolish(self._round_title)
+        self._round_title.style().polish(self._round_title)
+        self._round_subtitle.style().unpolish(self._round_subtitle)
+        self._round_subtitle.style().polish(self._round_subtitle)
+
+        self._alert_timer.start(max(0, int(duration)))
+
+    def update_frame(self, image: QPixmap) -> None:
         if self._player_panel is not None:
-            self._player_panel.set_frame(data.frame, mirror=True)
+            self._player_panel.set_frame(image)
         if self._ai_panel is not None and not self._ai_has_result and not self._ai_thinking_shown:
             self._set_ai_thinking()
 
@@ -133,9 +160,26 @@ class GameScreen(ScreenBase):
             self._set_ai_move_icon(data.round_record.computer_move)
         if self._player_panel is not None:
             self._player_panel.set_detected_text(data.round_record.player_move.name.upper())
-            self._player_panel.set_frame(data.frame, mirror=True)
+            self._player_panel.set_frame(data.get_pixmap())
 
     # ------------------------------------------------------------------
+    def _save_current_title_and_subtitle(self) -> None:
+        if self._round_title.objectName() == "roundTitleAlert":
+            return
+        self._round_title_before_alert = self._round_title.text()
+        self._round_title_object_name_before_alert = self._round_title.objectName()
+        self._round_subtitle_before_alert = self._round_subtitle.text()
+
+    def _clear_alert(self):
+        self._alert_priority = None
+        self._round_title.setText(self._round_title_before_alert)
+        self._round_title.setObjectName(self._round_title_object_name_before_alert)
+        self._round_subtitle.setText(self._round_subtitle_before_alert)
+        self._round_title.style().unpolish(self._round_title)
+        self._round_title.style().polish(self._round_title)
+        self._round_subtitle.style().unpolish(self._round_subtitle)
+        self._round_subtitle.style().polish(self._round_subtitle)
+
     def _build_score_card(self) -> QFrame:
         card = QFrame()
         card.setObjectName("roundScoreCard")

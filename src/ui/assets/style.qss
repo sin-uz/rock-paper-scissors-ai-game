@@ -115,6 +115,11 @@
     font-weight: 900;
     color: #0f172a;
 }
+#roundTitleAlert {
+    font-size: 52px;
+    font-weight: 900;
+    color: #0f172a;
+}
 #roundTitleWin {
     font-size: 52px;
     font-weight: 900;

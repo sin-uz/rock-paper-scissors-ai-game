@@ -1,3 +1,4 @@
+from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import (
 
     QVBoxLayout,
@@ -17,19 +18,16 @@ from src.ui.utils.bridge import EventScoreChanged, EventGameIdle, EventGameCount
 
 
 class Window(QMainWindow):
-    def __init__(self, game_controller: GameController, /, *, show_ai_analytics: bool = False):
+    def __init__(self, game_controller: GameController, /, *, show_ai_analytics: bool = False, mirror_camera: bool = True):
         super().__init__()
 
         self._show_ai_analytics = show_ai_analytics
+        self._mirror_camera = mirror_camera
         self._game_controller = game_controller
-
 
         self.setWindowTitle("SINUZ - Kamień Papier Nożyce")
         self.resize(1280, 800)
 
-        self._camera_frame = CameraFrame(
-            show_ai_analytics=self._show_ai_analytics,
-        )
 
         self._init_ui()
 
@@ -46,7 +44,8 @@ class Window(QMainWindow):
         self._content = ContentManager(
             central,
             show_ai_analytics=self._show_ai_analytics,
-            game_controller=self._game_controller
+            game_controller=self._game_controller,
+            mirror_camera=self._mirror_camera,
         )
         self._bottom = Bottom(central)
 
@@ -61,17 +60,26 @@ class Window(QMainWindow):
 
         self.setCentralWidget(central)
 
-
     def on_gesture_progress(self, data: EventGestureProgress):
         print("Gesture progress: ", data.progress, "Thumb direction: ", data.thumb_direction)
         if data.thumb_direction == ThumbDirection.UP:
-            message = f"Keep your thumb up to start the game! ({int(data.progress * 100)}%)"
+            self._content.camera_frame.show_alert(
+                f"Keep your thumb up to start the game! ({int(data.progress * 100)}%)",
+                duration=500,
+                priority=1
+            )
         elif data.thumb_direction == ThumbDirection.DOWN:
-            message = f"Keep your thumb down to end the game! ({int(data.progress * 100)}%)"
-        else:
-            message = f"Gesture progress: {int(data.progress * 100)}% - {data.thumb_direction.name}"
+            screens = (self._content.screen_during_round, self._content.screen_result_of_round)
+            for screen in screens:
+                if screen is not None:
+                    screen.show_alert(
+                        title="Keep your thumb down to end the game!",
+                        subtitle=f"{int(data.progress * 100)}%",
+                        duration=500,
+                        priority=1
+                    )
 
-        self._content.camera_frame.show_alert(message, duration=500, priority=1)
+
 
     def on_game_started(self, data: GameState):
         print("Game started.", data)
@@ -85,21 +93,18 @@ class Window(QMainWindow):
         if data is None or data.count_down_time is None:
             return
 
-        during_round_screen = self._content.during_round_screen
+        during_round_screen = self._content.screen_during_round
         if during_round_screen is not None:
-            during_round_screen.set_round_title(f"Round starts in {data.count_down_time}...")
-            during_round_screen.set_round_subtitle("Get ready!")
-
+            during_round_screen.show_alert(
+                title=f"Round starts in {data.count_down_time}...",
+                subtitle=f"Get ready!",
+                duration=1000,
+            )
 
     def on_game_round_active(self, data: EventGameRoundActive):
         print("Game round active.", data)
-
         self._content.change_content(TypeOfScreen.DURING_ROUND)
-        during_round_screen = self._content.during_round_screen
 
-        if during_round_screen is not None:
-            during_round_screen.set_round_title("Round in progress")
-            during_round_screen.set_round_subtitle("Waiting for player move...")
 
     def on_game_round_result(self, data: EventGameRoundResult):
         print("Game round result.", data)
@@ -121,10 +126,6 @@ class Window(QMainWindow):
         )
 
     @property
-    def camera_frame(self) -> CameraFrame:
-        return self._camera_frame
-
-    @property
     def content_frame(self) -> ContentManager:
         return self._content
 
@@ -134,8 +135,6 @@ class Window(QMainWindow):
         super().closeEvent(event)
 
     def resizeEvent(self, event):
-        if getattr(self, "_camera", None) is not None:
-            self._camera_frame.handle_resize()
         super().resizeEvent(event)
 
     def restart_content(self):

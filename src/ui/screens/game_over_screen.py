@@ -211,20 +211,20 @@ class GameOverScreen(ScreenBase):
     @staticmethod
     def _build_circle_with_badge(
             circle_name: str,
-        icon_name: str,
-        icon_color: str,
-        badge_text: str,
-        badge_name: str,
+            icon_name: str,
+            icon_color: str,
+            badge_text: str,
+            badge_name: str,
     ) -> tuple:
         """Circle icon with a pill badge overlapping its top-right corner.
         The wrapper is wide enough to fully contain the badge so nothing is
         clipped. The circle is horizontally centred inside the wrapper so the
         whole widget centres correctly under the 'PLAYER' / 'AI ROBOT' labels
         (which are given the same fixed width as the wrapper)."""
-        CIRCLE = 112   # circle diameter
-        BADGE_H = 22   # badge height
-        BADGE_W = 90   # wide enough for any badge text at 9px bold
-        OFFSET = 10    # extra height at top for badge vertical overflow
+        CIRCLE = 112  # circle diameter
+        BADGE_H = 22  # badge height
+        BADGE_W = 90  # wide enough for any badge text at 9px bold
+        OFFSET = 10  # extra height at top for badge vertical overflow
         # Badge right-edge overhangs the circle by half its width
         OVERHANG = BADGE_W // 2  # 45 px to the right of circle centre
         WRAPPER_W = CIRCLE + OVERHANG  # 157 px — badge fully inside
@@ -294,16 +294,14 @@ class GameOverScreen(ScreenBase):
         total_lbl.setObjectName("endTotalLabel")
         self._total_score_label.setObjectName("endTotalValue")
         self._total_score_label.setTextFormat(Qt.TextFormat.RichText)
-        self._total_score_label.setText("<span style='font-size:28px;font-weight:900;color:#0f172a;'>0</span><span style='font-size:13px;color:#94a3b8;font-weight:600;'> pts</span>")
+        self._total_score_label.setText(
+            "<span style='font-size:28px;font-weight:900;color:#0f172a;'>0</span><span style='font-size:13px;color:#94a3b8;font-weight:600;'> pts</span>")
         total_layout.addWidget(total_lbl)
         total_layout.addWidget(self._total_score_label)
 
         layout.addLayout(left, 1)
         layout.addWidget(total_box, 0, Qt.AlignmentFlag.AlignVCenter)
         return card
-
-
-
 
     def _build_actions(self) -> QHBoxLayout:
         actions = QHBoxLayout()
