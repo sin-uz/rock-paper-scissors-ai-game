@@ -8,14 +8,14 @@ from PySide6.QtWidgets import (
 )
 
 from src.core.domain import ThumbDirection
+from src.core.game_controller import GameController
 from src.core.game_state import GameState
 from src.ui.components.bottom import Bottom
-from src.ui.utils.content_manager import ContentManager
 from src.ui.components.header import Header
-from src.core.game_controller import GameController
-from src.ui.utils.type_of_screen import TypeOfScreen
 from src.ui.utils.bridge import EventScoreChanged, EventGameIdle, EventGameCountdown, EventGameRoundActive, \
     EventGameRoundResult, EventGameOver, EventGestureProgress
+from src.ui.utils.content_manager import ContentManager
+from src.ui.utils.type_of_screen import TypeOfScreen
 
 _ASSETS_DIR = Path(__file__).resolve().parent / "assets"
 _logger = logging.getLogger(__name__)
@@ -95,7 +95,7 @@ class Window(QMainWindow):
     def on_game_countdown(self, data: EventGameCountdown):
         if data is None or data.count_down_time is None:
             return
-
+        self._content.change_content(TypeOfScreen.DURING_ROUND)
         during_round_screen = self._content.screen_during_round
         if during_round_screen is not None:
             during_round_screen.show_alert(

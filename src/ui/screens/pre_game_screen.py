@@ -1,11 +1,10 @@
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QPixmap
 from PySide6.QtWidgets import QVBoxLayout, QGridLayout, QFrame, QHBoxLayout, QLabel
 from qt_material_icons import MaterialIcon
 
 from src.ui.components.camera import CameraFrame
 from src.ui.screens.screen_base import ScreenBase
-from src.ui.utils.bridge import EventFrameChanged
 
 
 class PreGameScreen(ScreenBase):
@@ -38,7 +37,7 @@ class PreGameScreen(ScreenBase):
     def reset(self) -> None:
         self._camera.set_scores(0, 0)
 
-    def update_frame(self, data: EventFrameChanged) -> None:
+    def update_frame(self, data: QPixmap) -> None:
         self._camera.update_frame(data)
 
     def update_scores(self, player_score: int, computer_score: int) -> None:

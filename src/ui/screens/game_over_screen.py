@@ -9,7 +9,6 @@ from qt_material_icons import MaterialIcon
 from src.ui.screens.screen_base import ScreenBase
 
 
-
 def _icon_label(name: str, color: str, icon_size: int = 48) -> QLabel:
     """Return a QLabel showing a Material icon pixmap tinted with *color*.
     Always loads size=48 (the only pre-built resource) and scales to icon_size."""
@@ -29,6 +28,13 @@ def _icon_label(name: str, color: str, icon_size: int = 48) -> QLabel:
 
 
 class GameOverScreen(ScreenBase):
+    _CIRCLE = 112  # circle diameter
+    _BADGE_H = 22  # badge height
+    _BADGE_W = 90  # wide enough for any badge text at 9px bold
+    _OFFSET = 10  # extra height at top for badge vertical overflow
+    # Badge right-edge overhangs the circle by half its width
+    _OVERHANG = _BADGE_W // 2  # 45 px to the right of circle center
+    _WRAPPER_W = _CIRCLE + _OVERHANG  # 157 px — badge fully inside
     def __init__(self, parent=None):
         """
             The screen shown at the end of the game, displaying the final score and performance summary, and allowing the player to save their score with a nickname. It also shows a QR code linking to the global leaderboard.
@@ -163,7 +169,7 @@ class GameOverScreen(ScreenBase):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
 
-        wrapper, w = self._build_circle_with_badge(
+        wrapper = self._build_circle_with_badge(
             "endPlayerCircle", "person", "#33c758", "+10 pts/win", "endBadgeGreen"
         )
         layout.addWidget(wrapper, 0, Qt.AlignmentFlag.AlignHCenter)
@@ -171,10 +177,10 @@ class GameOverScreen(ScreenBase):
         label = QLabel("PLAYER")
         label.setObjectName("endPlayerLabel")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        label.setFixedWidth(w)
+        label.setFixedWidth(self._WRAPPER_W)
         self._player_score.setObjectName("endPlayerScore")
         self._player_score.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self._player_score.setFixedWidth(w)
+        self._player_score.setFixedWidth(self._WRAPPER_W)
 
         layout.addWidget(label)
         layout.addWidget(self._player_score)
@@ -189,7 +195,7 @@ class GameOverScreen(ScreenBase):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
 
-        wrapper, w = self._build_circle_with_badge(
+        wrapper = self._build_circle_with_badge(
             "endAiCircle", "smart_toy", "#ff3b30", "-5 pts/loss", "endBadgeRed"
         )
         layout.addWidget(wrapper, 0, Qt.AlignmentFlag.AlignHCenter)
@@ -197,57 +203,51 @@ class GameOverScreen(ScreenBase):
         label = QLabel("AI ROBOT")
         label.setObjectName("endAiLabel")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        label.setFixedWidth(w)
+        label.setFixedWidth(self._WRAPPER_W)
         self._computer_score.setObjectName("endAiScore")
         self._computer_score.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self._computer_score.setFixedWidth(w)
+        self._computer_score.setFixedWidth(self._WRAPPER_W)
 
         layout.addWidget(label)
         layout.addWidget(self._computer_score)
         return col
 
-    @staticmethod
+
     def _build_circle_with_badge(
+            self,
             circle_name: str,
             icon_name: str,
             icon_color: str,
             badge_text: str,
             badge_name: str,
-    ) -> tuple:
+    ) -> QWidget:
         """Circle icon with a pill badge overlapping its top-right corner.
         The wrapper is wide enough to fully contain the badge so nothing is
         clipped. The circle is horizontally centred inside the wrapper so the
         whole widget centres correctly under the 'PLAYER' / 'AI ROBOT' labels
         (which are given the same fixed width as the wrapper)."""
-        CIRCLE = 112  # circle diameter
-        BADGE_H = 22  # badge height
-        BADGE_W = 90  # wide enough for any badge text at 9px bold
-        OFFSET = 10  # extra height at top for badge vertical overflow
-        # Badge right-edge overhangs the circle by half its width
-        OVERHANG = BADGE_W // 2  # 45 px to the right of circle centre
-        WRAPPER_W = CIRCLE + OVERHANG  # 157 px — badge fully inside
 
         wrapper = QWidget()
-        wrapper.setFixedSize(WRAPPER_W, CIRCLE + OFFSET)
+        wrapper.setFixedSize(self._WRAPPER_W, self._CIRCLE + self._OFFSET)
 
         # Circle starts at x = (WRAPPER_W - CIRCLE) // 2 = ~22 px so it is
         # horizontally centred inside the wider wrapper.
-        cx = (WRAPPER_W - CIRCLE) // 2
+        cx = (self._WRAPPER_W - self._CIRCLE) // 2
         circle = QFrame(wrapper)
         circle.setObjectName(circle_name)
-        circle.setGeometry(cx, OFFSET, CIRCLE, CIRCLE)
+        circle.setGeometry(cx, self._OFFSET, self._CIRCLE, self._CIRCLE)
 
         icon_lbl = _icon_label(icon_name, icon_color, 52)
         icon_lbl.setParent(circle)
-        icon_lbl.setGeometry((CIRCLE - 52) // 2, (CIRCLE - 52) // 2, 52, 52)
+        icon_lbl.setGeometry((self._CIRCLE - 52) // 2, (self._CIRCLE - 52) // 2, 52, 52)
 
         # Badge: right-aligned to the right edge of the wrapper, top of wrapper
         badge = QLabel(badge_text, wrapper)
         badge.setObjectName(badge_name)
         badge.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        badge.setGeometry(WRAPPER_W - BADGE_W, 0, BADGE_W, BADGE_H)
+        badge.setGeometry(self._WRAPPER_W - self._BADGE_W, 0, self._BADGE_W, self._BADGE_H)
 
-        return wrapper, WRAPPER_W  # return width so columns can match labels
+        return wrapper
 
     @staticmethod
     def _build_vs_divider() -> QLabel:

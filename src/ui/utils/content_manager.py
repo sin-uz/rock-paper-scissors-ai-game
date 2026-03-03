@@ -8,8 +8,8 @@ from src.ui.screens.game_over_screen import GameOverScreen
 from src.ui.screens.game_screen import GameScreen
 from src.ui.screens.pre_game_screen import PreGameScreen
 from src.ui.screens.screen_base import ScreenBase
-from src.ui.utils.type_of_screen import TypeOfScreen
 from src.ui.utils.bridge import EventFrameChanged, EventGameRoundResult
+from src.ui.utils.type_of_screen import TypeOfScreen
 from src.ui.utils.visualizer import AnnotationsVisualizer
 
 
