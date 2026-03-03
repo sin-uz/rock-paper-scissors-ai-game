@@ -1,6 +1,7 @@
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
-from PySide6.QtWidgets import QFrame, QLabel, QHBoxLayout, QVBoxLayout, QSizePolicy, QGraphicsDropShadowEffect
+from PySide6.QtWidgets import (QFrame, QLabel, QHBoxLayout, QVBoxLayout,
+                               QSizePolicy, QGraphicsDropShadowEffect)
 
 
 class CameraScoreOverlay(QFrame):

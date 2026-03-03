@@ -1,15 +1,12 @@
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QColor, QPixmap
+from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QLabel, QFrame,
-    QPushButton, QLineEdit, QSizePolicy, QWidget,
+    QPushButton, QSizePolicy, QWidget,
 )
 from qt_material_icons import MaterialIcon
-from pathlib import Path
 
 from src.ui.screens.screen_base import ScreenBase
-
-_ASSETS_DIR = Path(__file__).resolve().parents[1] / "assets"
 
 
 def _icon_label(name: str, color: str, icon_size: int = 48) -> QLabel:
@@ -31,6 +28,13 @@ def _icon_label(name: str, color: str, icon_size: int = 48) -> QLabel:
 
 
 class GameOverScreen(ScreenBase):
+    _CIRCLE = 112  # circle diameter
+    _BADGE_H = 22  # badge height
+    _BADGE_W = 90  # wide enough for any badge text at 9px bold
+    _OFFSET = 10  # extra height at top for badge vertical overflow
+    # Badge right-edge overhangs the circle by half its width
+    _OVERHANG = _BADGE_W // 2  # 45 px to the right of circle center
+    _WRAPPER_W = _CIRCLE + _OVERHANG  # 157 px — badge fully inside
     def __init__(self, parent=None):
         """
             The screen shown at the end of the game, displaying the final score and performance summary, and allowing the player to save their score with a nickname. It also shows a QR code linking to the global leaderboard.
@@ -47,7 +51,6 @@ class GameOverScreen(ScreenBase):
         self._title = QLabel("Match Complete")
         self._subtitle = QLabel("Review the final score below.")
 
-        # Performance summary dynamic labels
         self._perf_wins_label = QLabel()
         self._perf_losses_label = QLabel()
         self._total_score_label = QLabel()
@@ -56,7 +59,6 @@ class GameOverScreen(ScreenBase):
         root.setContentsMargins(32, 32, 32, 32)
         root.setSpacing(24)
 
-        # ── Title block ───────────────────────────────────────────────
         self._title.setObjectName("endTitle")
         self._title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self._subtitle.setObjectName("endSubtitle")
@@ -64,17 +66,13 @@ class GameOverScreen(ScreenBase):
         root.addWidget(self._title)
         root.addWidget(self._subtitle)
 
-        # ── Main 2-col content ────────────────────────────────────────
         cols = QHBoxLayout()
         cols.setSpacing(20)
         cols.addWidget(self._build_score_panel(), 2)
-        cols.addWidget(self._build_leaderboard_panel(), 1)
         root.addLayout(cols, 1)
 
-        # ── Action buttons ────────────────────────────────────────────
         root.addLayout(self._build_actions())
 
-    # ------------------------------------------------------------------
     @property
     def camera(self):
         return None
@@ -147,10 +145,6 @@ class GameOverScreen(ScreenBase):
 
         # Performance summary card
         layout.addWidget(self._build_perf_summary())
-        layout.addSpacing(24)
-
-        # Admin record / name input
-        layout.addWidget(self._build_admin_record())
 
         return panel
 
@@ -175,7 +169,7 @@ class GameOverScreen(ScreenBase):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
 
-        wrapper, w = self._build_circle_with_badge(
+        wrapper = self._build_circle_with_badge(
             "endPlayerCircle", "person", "#33c758", "+10 pts/win", "endBadgeGreen"
         )
         layout.addWidget(wrapper, 0, Qt.AlignmentFlag.AlignHCenter)
@@ -183,10 +177,10 @@ class GameOverScreen(ScreenBase):
         label = QLabel("PLAYER")
         label.setObjectName("endPlayerLabel")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        label.setFixedWidth(w)
+        label.setFixedWidth(self._WRAPPER_W)
         self._player_score.setObjectName("endPlayerScore")
         self._player_score.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self._player_score.setFixedWidth(w)
+        self._player_score.setFixedWidth(self._WRAPPER_W)
 
         layout.addWidget(label)
         layout.addWidget(self._player_score)
@@ -201,7 +195,7 @@ class GameOverScreen(ScreenBase):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
 
-        wrapper, w = self._build_circle_with_badge(
+        wrapper = self._build_circle_with_badge(
             "endAiCircle", "smart_toy", "#ff3b30", "-5 pts/loss", "endBadgeRed"
         )
         layout.addWidget(wrapper, 0, Qt.AlignmentFlag.AlignHCenter)
@@ -209,59 +203,54 @@ class GameOverScreen(ScreenBase):
         label = QLabel("AI ROBOT")
         label.setObjectName("endAiLabel")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        label.setFixedWidth(w)
+        label.setFixedWidth(self._WRAPPER_W)
         self._computer_score.setObjectName("endAiScore")
         self._computer_score.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self._computer_score.setFixedWidth(w)
+        self._computer_score.setFixedWidth(self._WRAPPER_W)
 
         layout.addWidget(label)
         layout.addWidget(self._computer_score)
         return col
 
+
     def _build_circle_with_badge(
-        self,
-        circle_name: str,
-        icon_name: str,
-        icon_color: str,
-        badge_text: str,
-        badge_name: str,
-    ) -> tuple:
+            self,
+            circle_name: str,
+            icon_name: str,
+            icon_color: str,
+            badge_text: str,
+            badge_name: str,
+    ) -> QWidget:
         """Circle icon with a pill badge overlapping its top-right corner.
         The wrapper is wide enough to fully contain the badge so nothing is
         clipped. The circle is horizontally centred inside the wrapper so the
         whole widget centres correctly under the 'PLAYER' / 'AI ROBOT' labels
         (which are given the same fixed width as the wrapper)."""
-        CIRCLE = 112   # circle diameter
-        BADGE_H = 22   # badge height
-        BADGE_W = 90   # wide enough for any badge text at 9px bold
-        OFFSET = 10    # extra height at top for badge vertical overflow
-        # Badge right-edge overhangs the circle by half its width
-        OVERHANG = BADGE_W // 2  # 45 px to the right of circle centre
-        WRAPPER_W = CIRCLE + OVERHANG  # 157 px — badge fully inside
 
         wrapper = QWidget()
-        wrapper.setFixedSize(WRAPPER_W, CIRCLE + OFFSET)
+        wrapper.setFixedSize(self._WRAPPER_W, self._CIRCLE + self._OFFSET)
 
         # Circle starts at x = (WRAPPER_W - CIRCLE) // 2 = ~22 px so it is
         # horizontally centred inside the wider wrapper.
-        cx = (WRAPPER_W - CIRCLE) // 2
+        cx = (self._WRAPPER_W - self._CIRCLE) // 2
         circle = QFrame(wrapper)
         circle.setObjectName(circle_name)
-        circle.setGeometry(cx, OFFSET, CIRCLE, CIRCLE)
+        circle.setGeometry(cx, self._OFFSET, self._CIRCLE, self._CIRCLE)
 
         icon_lbl = _icon_label(icon_name, icon_color, 52)
         icon_lbl.setParent(circle)
-        icon_lbl.setGeometry((CIRCLE - 52) // 2, (CIRCLE - 52) // 2, 52, 52)
+        icon_lbl.setGeometry((self._CIRCLE - 52) // 2, (self._CIRCLE - 52) // 2, 52, 52)
 
         # Badge: right-aligned to the right edge of the wrapper, top of wrapper
         badge = QLabel(badge_text, wrapper)
         badge.setObjectName(badge_name)
         badge.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        badge.setGeometry(WRAPPER_W - BADGE_W, 0, BADGE_W, BADGE_H)
+        badge.setGeometry(self._WRAPPER_W - self._BADGE_W, 0, self._BADGE_W, self._BADGE_H)
 
-        return wrapper, WRAPPER_W  # return width so columns can match labels
+        return wrapper
 
-    def _build_vs_divider(self) -> QLabel:
+    @staticmethod
+    def _build_vs_divider() -> QLabel:
         vs = QLabel("vs")
         vs.setObjectName("endVsLabel")
         vs.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -303,106 +292,14 @@ class GameOverScreen(ScreenBase):
         total_lbl.setObjectName("endTotalLabel")
         self._total_score_label.setObjectName("endTotalValue")
         self._total_score_label.setTextFormat(Qt.TextFormat.RichText)
-        self._total_score_label.setText("<span style='font-size:28px;font-weight:900;color:#0f172a;'>0</span><span style='font-size:13px;color:#94a3b8;font-weight:600;'> pts</span>")
+        self._total_score_label.setText(
+            "<span style='font-size:28px;font-weight:900;color:#0f172a;'>0</span><span style='font-size:13px;color:#94a3b8;font-weight:600;'> pts</span>")
         total_layout.addWidget(total_lbl)
         total_layout.addWidget(self._total_score_label)
 
         layout.addLayout(left, 1)
         layout.addWidget(total_box, 0, Qt.AlignmentFlag.AlignVCenter)
         return card
-
-    def _build_admin_record(self) -> QFrame:
-        section = QFrame()
-        section.setObjectName("endAdminSection")
-        layout = QVBoxLayout(section)
-        layout.setContentsMargins(0, 20, 0, 0)
-        layout.setSpacing(10)
-
-        lbl = QLabel("Your nickname")
-        lbl.setObjectName("endAdminLabel")
-        layout.addWidget(lbl)
-
-        row = QHBoxLayout()
-        row.setSpacing(12)
-
-        self._name_input = QLineEdit()
-        self._name_input.setObjectName("endNameInput")
-        self._name_input.setPlaceholderText("Enter your name")
-        self._name_input.setFixedHeight(52)
-
-        save_btn = QPushButton("Save Score")
-        save_btn.setObjectName("endSaveButton")
-        save_btn.setFixedHeight(52)
-
-        # Add chevron icon to save button
-        save_icon = MaterialIcon("chevron_right", size=48)
-        save_btn.setIcon(save_icon)
-        save_btn.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
-
-        row.addWidget(self._name_input, 1)
-        row.addWidget(save_btn)
-        layout.addLayout(row)
-        return section
-
-    def _build_leaderboard_panel(self) -> QFrame:
-        panel = QFrame()
-        panel.setObjectName("endLeaderboardPanel")
-        layout = QVBoxLayout(panel)
-        layout.setContentsMargins(32, 40, 32, 40)
-        layout.setSpacing(24)
-        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        title = QLabel("Leaderboard")
-        title.setObjectName("endLeaderTitle")
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        subtitle = QLabel("Scan to view your global ranking")
-        subtitle.setObjectName("endLeaderSubtitle")
-        subtitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        subtitle.setWordWrap(True)
-
-        layout.addWidget(title)
-        layout.addWidget(subtitle)
-
-        # QR code image box
-        qr_box = QFrame()
-        qr_box.setObjectName("endQrBox")
-        qr_box.setFixedSize(200, 200)
-        qr_layout = QVBoxLayout(qr_box)
-        qr_layout.setContentsMargins(12, 12, 12, 12)
-
-        qr_image = QLabel()
-        qr_image.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        qr_pixmap = QPixmap(str(_ASSETS_DIR / "qr_code.png"))
-        if not qr_pixmap.isNull():
-            qr_pixmap = qr_pixmap.scaled(
-                QSize(176, 176),
-                Qt.AspectRatioMode.KeepAspectRatio,
-                Qt.TransformationMode.SmoothTransformation,
-            )
-            qr_image.setPixmap(qr_pixmap)
-        else:
-            qr_image.setText("QR")
-        qr_layout.addWidget(qr_image, 0, Qt.AlignmentFlag.AlignCenter)
-
-        layout.addWidget(qr_box, 0, Qt.AlignmentFlag.AlignCenter)
-
-        # Scan pill
-        scan_pill = QFrame()
-        scan_pill.setObjectName("endScanPill")
-        scan_layout = QHBoxLayout(scan_pill)
-        scan_layout.setContentsMargins(16, 8, 16, 8)
-        scan_layout.setSpacing(8)
-
-        scan_icon = _icon_label("qr_code_scanner", "#33c758", 20)
-        scan_text = QLabel("SCAN NOW")
-        scan_text.setObjectName("endScanText")
-
-        scan_layout.addWidget(scan_icon)
-        scan_layout.addWidget(scan_text)
-        layout.addWidget(scan_pill, 0, Qt.AlignmentFlag.AlignCenter)
-
-        return panel
 
     def _build_actions(self) -> QHBoxLayout:
         actions = QHBoxLayout()

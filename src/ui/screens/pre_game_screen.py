@@ -1,5 +1,5 @@
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QPixmap
 from PySide6.QtWidgets import QVBoxLayout, QGridLayout, QFrame, QHBoxLayout, QLabel
 from qt_material_icons import MaterialIcon
 
@@ -11,8 +11,6 @@ class PreGameScreen(ScreenBase):
     def __init__(self,
                  camera_frame: CameraFrame,
                  parent=None,
-                 *,
-                 is_during_round=False,
                  ) -> None:
         super().__init__(parent)
         self.setObjectName("beforeStartContent")
@@ -31,7 +29,6 @@ class PreGameScreen(ScreenBase):
         self._instruction_bar = self._build_instruction_bar()
         helpers.addWidget(self._instruction_bar, 0, 0, alignment=Qt.AlignmentFlag.AlignHCenter)
         root.addLayout(helpers)
-        self.set_helpers_visible(not is_during_round)
 
     @property
     def camera(self):
@@ -40,9 +37,8 @@ class PreGameScreen(ScreenBase):
     def reset(self) -> None:
         self._camera.set_scores(0, 0)
 
-    def set_helpers_visible(self, visible: bool) -> None:
-        if self._instruction_bar is not None:
-            self._instruction_bar.setVisible(visible)
+    def update_frame(self, data: QPixmap) -> None:
+        self._camera.update_frame(data)
 
     def update_scores(self, player_score: int, computer_score: int) -> None:
         self._camera.set_scores(player_score, computer_score)
@@ -53,8 +49,10 @@ class PreGameScreen(ScreenBase):
         layout = QHBoxLayout(bar)
         layout.setContentsMargins(16, 10, 16, 10)
         layout.setSpacing(24)
-        layout.addWidget(self._build_gesture_tile("thumb_up", "Thumbs Up", "To Start The Game", icon_color=QColor("#33c758")))
-        layout.addWidget(self._build_gesture_tile("thumb_down", "Thumbs Down", "To Finish The Game", icon_color=QColor("#ff3b30")))
+        layout.addWidget(
+            self._build_gesture_tile("thumb_up", "Thumbs Up", "To Start The Game", icon_color=QColor("#33c758")))
+        layout.addWidget(
+            self._build_gesture_tile("thumb_down", "Thumbs Down", "To Finish The Game", icon_color=QColor("#ff3b30")))
         return bar
 
     def _build_gesture_tile(self, icon_name: str, title: str, subtitle: str, *, icon_color: QColor) -> QFrame:

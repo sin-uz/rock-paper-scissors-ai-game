@@ -1,3 +1,4 @@
+import logging
 import sys
 import threading
 
@@ -9,23 +10,37 @@ from src.core.round_synchronizer import RoundSynchronizer
 from src.core.strategies import ResearchBasedStrategy
 from src.ui.utils.bridge import UiBridge
 from src.ui.window import Window
+from src.util.config import Config
 
 
 def main():
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        datefmt="%H:%M:%S",
+        force=True,
+    )
+
+    config = Config.load_config()
+
     app = QApplication(sys.argv)
     bridge = UiBridge()
 
     classifier = VectorBasedClassifier()
-    synchronizer = RoundSynchronizer(classifier)
     computer_strategy = ResearchBasedStrategy()
-    
+
     controller = GameController(
-        classifier, synchronizer, computer_strategy, bridge,
+        classifier=classifier,
+        computer_strategy=computer_strategy,
+        bridge=bridge,
+        detection_camera_index=config.detection_camera,
+        showing_camera_index=config.showing_camera
     )
     game_window = Window(
-        controller, show_ai_analytics=True,
+        controller,
+        show_ai_analytics=config.show_ai_analysis,
+        mirror_camera=config.mirror_camera
     )
-
 
     bridge.event_frame_changed.connect(
         game_window.content_frame.update_camera_frame
@@ -62,7 +77,6 @@ def main():
     sys.exit(
         app.exec()
     )
-
 
 
 if __name__ == "__main__":

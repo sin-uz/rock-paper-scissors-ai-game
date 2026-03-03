@@ -1,29 +1,21 @@
 import time
 
-import cv2
 from PySide6.QtCore import Qt, QTimer, QRect
-from PySide6.QtGui import QImage, QPixmap, QPainter, QPainterPath
+from PySide6.QtGui import QPixmap, QPainter, QPainterPath
 from PySide6.QtWidgets import QFrame, QLabel, QSizePolicy, QGraphicsDropShadowEffect, QGraphicsBlurEffect, \
     QStackedLayout
 
 from src.ui.components.camera_score import CameraScoreOverlay
-from src.ui.utils.bridge import EventFrameChanged
-from src.ui.visualizer import AnnotationsVisualizer
+from src.ui.utils.visualizer import AnnotationsVisualizer
 
 
 class CameraFrame(QFrame):
     """
     It is a wrapper around QFrame that handles video capture and display.
-
-    :param show_ai_analytics: bool - whether to show AI analytics on the video feed. If True, it will draw the detected hands and FPS on the video feed. It can be useful for debugging.
     """
-    def __init__(self,
-                 *,
-                 show_ai_analytics: bool = False,
-                 ):
-        super().__init__()
 
-        self._show_ai_analytics = show_ai_analytics
+    def __init__(self):
+        super().__init__()
         self._last_frame_ts = None
         self._fps = 0.0
 
@@ -127,33 +119,17 @@ class CameraFrame(QFrame):
 
         self._alert_timer.start(max(0, int(duration)))
 
-    def update_frame(self, data: EventFrameChanged) -> None:
+    def update_frame(self, image: QPixmap) -> None:
         """
         It updates the video feed by capturing a frame from the camera, processing it with the game controller,
         and displaying it on the label.
         If AI analytics are enabled, it also draws the analytics on the frame before displaying it.
         It also makes mirror effect on the frame to create a more natural user experience, as if looking into a mirror.
 
-        :param data: EventFrameChanged - the data containing the frame and detected hands to be displayed on the video feed.
+        :param image: QImage - the frame captured from the camera, converted to QImage format.
         :return:
         """
-        mirror_frame = cv2.flip(data.frame, 1)
-
-        if self._show_ai_analytics:
-            self._update_fps()
-            self._visualizer.draw_analytics(mirror_frame, self._fps, len(data.detected_hands))
-            mirror_frame = self._visualizer.render(mirror_frame, data.detected_hands, mirror_display=True)
-
-        rgb_frame = cv2.cvtColor(mirror_frame, cv2.COLOR_BGR2RGB)
-        height, width, _ = rgb_frame.shape
-        image = QImage(
-            rgb_frame.data,
-            width,
-            height,
-            width * 3,
-            QImage.Format.Format_RGB888,
-        )
-        self._set_pixmap(QPixmap.fromImage(image))
+        self._set_pixmap(image)
 
     def _set_pixmap(self, pixmap: QPixmap) -> None:
         """
