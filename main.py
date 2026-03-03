@@ -6,7 +6,6 @@ from PySide6.QtWidgets import QApplication
 
 from src.core.game_controller import GameController
 from src.ml.gesture_classifier import VectorBasedClassifier
-from src.core.round_synchronizer import RoundSynchronizer
 from src.core.strategies import ResearchBasedStrategy
 from src.ui.utils.bridge import UiBridge
 from src.ui.window import Window
