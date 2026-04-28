@@ -7,6 +7,7 @@ from src.core.game_logic import GameLogic
 from src.core.game_state import GameState
 from src.ui.utils.bridge import UiBridge, EventFrameChanged
 
+FPS_TIME = 0.05  #50 ms <- 20Hz
 
 class GameController:
     def __init__(self,
@@ -38,8 +39,9 @@ class GameController:
                 min_tracking_confidence=0.5
         ) as detector:
             while self._cap.isOpened():
+                t_start = time.perf_counter()
                 if self._stop_detection:
-                    time.sleep(0.05)
+                    time.sleep(FPS_TIME)
                     continue
 
                 reft, frame = self._cap.read()
@@ -57,6 +59,12 @@ class GameController:
                 self._ui_bridge.event_frame_changed.emit(
                     EventFrameChanged(frame, detected_hands)
                 )
+                
+                #ensure next capture loop starts at desired FPS
+                t_elapsed = time.perf_counter() - t_start
+                sleep_time = FPS_TIME - t_elapsed
+                if sleep_time > 0:
+                    time.sleep(sleep_time)
 
     @property
     def player_score(self):
