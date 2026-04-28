@@ -1,13 +1,8 @@
 import cv2
 import mediapipe as mp
-<<<<<<< HEAD
-from src.util.filters import OneEuroFilter as LandmarkFilter
-# from src.util.filters import SimpleFilter as LandmarkFilter
-=======
 # from src.util.filters import OneEuroFilter as LandmarkFilter
 # from src.util.filters import SimpleFilter as LandmarkFilter
 from src.util.filters import NoFilter as LandmarkFilter
->>>>>>> 99cb15d (constant FPS controller + filter framework)
 
 class HandDetector:
     def __init__(
