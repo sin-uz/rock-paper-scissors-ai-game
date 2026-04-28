@@ -149,3 +149,14 @@ class SimpleFilter(BaseFilter):
       self._filter_scalar(state.setdefault("y", {}), y),
       self._filter_scalar(state.setdefault("z", {}), z),
     )
+
+class NoFilter(BaseFilter):
+  def __init__(self, alpha=0.9, **kwargs):
+    super().__init__(**kwargs)
+    self.alpha = alpha
+
+  def _init_filters(self):
+    pass
+
+  def smoothen(self, side, landmarks, now=None):
+    return landmarks
