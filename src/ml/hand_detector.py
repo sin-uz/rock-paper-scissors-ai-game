@@ -1,5 +1,8 @@
 import cv2
 import mediapipe as mp
+# from src.util.filters import OneEuroFilter as LandmarkFilter
+# from src.util.filters import SimpleFilter as LandmarkFilter
+from src.util.filters import NoFilter as LandmarkFilter
 
 class HandDetector:
     def __init__(
@@ -10,6 +13,7 @@ class HandDetector:
         min_detection_confidence: float = 0.5,
         min_tracking_confidence: float = 0.5,
     ):
+        self.landmark_filter = LandmarkFilter()
         self._user_perspective = user_perspective
         self._mp_hands = mp.solutions.hands
         self._hands = self._mp_hands.Hands(
@@ -36,6 +40,7 @@ class HandDetector:
     
     def _extract_hands_by_side(self, results):
         hands_by_side = {}
+        now = self.filter.check_seen()
 
         if not results.multi_hand_landmarks or not results.multi_handedness:
             return hands_by_side
@@ -45,8 +50,13 @@ class HandDetector:
             results.multi_hand_landmarks
         ):
             side = self._extract_side(handedness)
-            landmark_coordinates = self._to_coordinates(hand_landmarks)
-            hands_by_side[side] = landmark_coordinates
+            
+            coords = self._to_coordinates(hand_landmarks)
+            #filter might need to know "now" to compute time difference
+            #because some implementations use derivatives
+            coords = self.landmark_filter.smoothen(side, coords, now)
+            
+            hands_by_side[side] = coords
 
         return hands_by_side
 
